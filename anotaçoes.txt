@@ -1,0 +1,5 @@
+//implementar recebimento a foto em routes/clientes.js //
+
+//alterar update do cliente//
+
+//definir var de ambiente do acesso ao banco//
