@@ -1,7 +1,7 @@
 {
   "name": "testapi",
   "version": "1.0.0",
-  "description": "",
+  "description": "**Edit a file, create a new file, and clone from Bitbucket in under 2 minutes**",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -11,6 +11,7 @@
   "license": "ISC",
   "dependencies": {
     "body-parser": "^1.19.0",
+    "cors": "^2.8.5",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "morgan": "^1.9.1",
@@ -18,5 +19,10 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
-  }
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@bitbucket.org/agenda-animal/api-agendaanimal.git"
+  },
+  "homepage": "https://bitbucket.org/agenda-animal/api-agendaanimal#readme"
 }

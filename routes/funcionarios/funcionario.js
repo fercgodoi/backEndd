@@ -10,7 +10,7 @@ router.get('/listarAll', (req, res, next) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('select * from vacina',
+        conn.query('select * from funcionario',
             (error, resultado, fields) => {
                 if(error){                                  //tratamento de erro da query
                     return res.status(500).send({ error: error})        
@@ -27,19 +27,23 @@ router.post('/inserirAll', (req, res, next) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('insert into vacina(dataApliVacina, dataProxVacina, nomeVacina, qntDoseVacina, valorVacina, statusVacina, idPet, idPrest, idFunc)                                    values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-                 [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.valorVacina, req.body.statusVacina, req.body.idPet, req.body.idPrest, req.body.idFunc],
+        conn.query('insert into funcionario(nomeFunc, cpfFunc, emailFunc, telefoneFunc, cepFunc, estadoFunc, cidadeFunc, ruaFunc, bairroFunc, numeroFunc, complementoFunc, senhaFunc, recepcionista, veterinario, Administrador, financeiro, idPrest)  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                 [req.body.nomeFunc, req.body.cpfFunc, req.body.emailFunc, req.body.telefoneFunc, req.body.cepFunc, req.body.estadoFunc, req.body.cidadeFunc, req.body.ruaFunc, req.body.bairroFunc, req.body.numeroFunc, req.body.complementoFunc, req.body.senhaFunc, req.body.recepcionista, req.body.veterinario,
+                    req.body.Administrador, req.body.financeiro,  req.body.idPrest],
                  (error, resultado, field)=> {      //tratando o retorno
                      conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
-                     res.status(201).send({                          
-                        mensagem: 'Vacina inserida com sucesso',
+
+                    res.status(201).send({                          
+                        mensagem: 'funcionario inserido com sucesso',
                         id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
                     })
+                     
                 }
         )
+
     }) 
 });
 
@@ -49,15 +53,16 @@ router.post('/atualizarAll', (req, res, next) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('update vacina set dataApliVacina = ?, dataProxVacina = ?, nomeVacina = ?, qntDoseVacina = ?, valorVacina = ?, statusVacina = ?, idPet = ?, idPrest = ?, idFunc = ? where idVacina = ?',
-                 [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.valorVacina, req.body.statusVacina, req.body.idPet, req.body.idPrest, req.body.idFunc, req.body.idVacina],
+        conn.query('update funcionario set nomeFunc = ?, cpfFunc = ?, emailFunc = ?, telefoneFunc = ?, cepFunc = ?, estadoFunc = ?, cidadeFunc = ?, ruaFunc = ?, bairroFunc = ?, numeroFunc = ?, complementoFunc = ?, senhaFunc = ?, recepcionista = ?, veterinario = ?, Administrador = ?, financeiro = ?,  idPrest = ? where idFunc = ?',
+        [req.body.nomeFunc, req.body.cpfFunc, req.body.emailFunc, req.body.telefoneFunc, req.body.cepFunc, req.body.estadoFunc, req.body.cidadeFunc, req.body.ruaFunc, req.body.bairroFunc, req.body.numeroFunc, req.body.complementoFunc, req.body.senhaFunc, req.body.recepcionista, req.body.veterinario,
+            req.body.Administrador, req.body.financeiro, req.body.idPrest, req.body.idFunc],
                  (error, resultado, field)=> {      //tratando o retorno
                      conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
                      res.status(201).send({                          
-                        mensagem: 'Vacina atualizada com sucesso',
+                        mensagem: 'Funcionario atualizada com sucesso',
                         id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
                     })
                 }
@@ -65,32 +70,12 @@ router.post('/atualizarAll', (req, res, next) => {
     }) 
 });
 
-router.delete('/deletarAll',(req, res, next) => {
-    mysql.getConnection((error, conn) =>{
-        if(error){                                  //tratamento de erro da conexao
-            return res.status(500).send({ error: error})        
-        }
-        conn.query(`delete from vacina where idVacina = ? `,[req.body.idCli],
-                 (error, resultado, field)=> {      //tratando o retorno
-                     conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
-                     if(error){                                  //tratamento de erro da query
-                        return res.status(500).send({ error: error})        
-                    }
-                     res.status(202).send({                          
-                        mensagem: 'Cliente deletado com sucesso',
-                        id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
-                    })
-                }
-        )
-    }) 
-});
-
-router.get('/buscar/:cliente', (req, res, next) => {       //rota passando parametro
+router.get('/buscar/:func', (req, res, next) => {       //rota passando parametro
     mysql.getConnection((error, conn) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('select * from vacina where nomeVacina = ?;',[req.params.cliente],
+        conn.query('select * from funcionario where nomeFunc = ?;',[req.params.func],
             (error, resultado, fields) => {
                 if(error){                                  //tratamento de erro da query
                     return res.status(500).send({ error: error})        
@@ -100,6 +85,27 @@ router.get('/buscar/:cliente', (req, res, next) => {       //rota passando param
         )
     })
 });
+
+router.delete('/deletar',(req, res, next) => {
+    mysql.getConnection((error, conn) =>{
+        if(error){                                  //tratamento de erro da conexao
+            return res.status(500).send({ error: error})        
+        }
+        conn.query(`delete from funcionario where idFunc = ? `,[req.body.idFunc],
+                 (error, resultado, field)=> {      //tratando o retorno
+                     conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
+                     if(error){                                  //tratamento de erro da query
+                        return res.status(500).send({ error: error})        
+                    }
+                     res.status(202).send({                          
+                        mensagem: 'Funcionario deletado com sucesso',
+                        id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
+                    })
+                }
+        )
+    }) 
+})
+
 
 
 module.exports = router; 

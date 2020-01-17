@@ -16,6 +16,18 @@ router.get('/listarAll', (req, res, next) => {
                 if(error){                                  //tratamento de erro da query
                     return res.status(500).send({ error: error})        
                 }
+
+                /*const response = {                          //tratando o retorno
+                    quantidade: resultado.length,
+                    Clientes: resultado.map(cli => {
+                        return{
+                            id_Cliente: cli.idCli,
+                            Nome: cli.nomeCli,
+                            cpfCli: cli.cpfCli
+                        }
+                    })
+                }*/
+
                 return res.status(200).send({response: resultado})
             }
         )
@@ -36,7 +48,8 @@ router.post('/inserirAll', (req, res, next) => {
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
-                     res.status(201).send({                          
+
+                    return res.status(201).send({                          
                         mensagem: 'Cliente inserido com sucesso',
                         id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
                     })
@@ -76,7 +89,7 @@ router.patch('/atualizarAll',(req, res, next) => {
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
-                     res.status(202).send({                          
+                    return res.status(202).send({                          
                         mensagem: 'Cliente alterado com sucesso',
                         id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
                     })
@@ -96,9 +109,9 @@ router.delete('/deletarAll',(req, res, next) => {
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
-                     res.status(202).send({                          
+                    return res.status(202).send({                          
                         mensagem: 'Cliente deletado com sucesso',
-                        id_Cliente: resultado.insertId                        //retorno do id de insert, proprio sql nos retorna
+                        id_Cliente: resultado                        //retorno do id de insert, proprio sql nos retorna
                     })
                 }
         )

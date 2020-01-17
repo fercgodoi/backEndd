@@ -7,11 +7,15 @@ const mysql = require('mysql');
         port     : 3306,
         user     : "root",
         password : "berlim45",
-        database : "AgendaAnimal"
+        database : "agendaanimal"
     });
 
+    pool.getConnection(function(err){
+        if(err) return console.log(err);
+        console.log('conectado');
+    })
 
-exports.pool = pool;
+exports.pool = pool; 
 
 
 /*
@@ -24,6 +28,5 @@ exports.pool = pool;
         
 
 "user": process.env.MYSQL_USER,
-        
-        
+          
 */

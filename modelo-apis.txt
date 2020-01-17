@@ -15,6 +15,15 @@
 -todas as vacinas
 -exames
 
+//API vacina
+-crudVacina ✔
+
+//API funcionario
+-crud Func
+
+//API prestador
+-crud Prest
+
 //Api Externas
 -gmail
 -cep    ✔

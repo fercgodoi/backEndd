@@ -1,18 +1,84 @@
+
+-----------------GERAL------------
+//definir var de ambiente do acesso ao banco//
+-install dotenv para poder enxergar as var de ambiente
+
+//melhorar o retorno de erro// ✔
+
+//implementar retorno de erro caso o servidor nao conctar// ✔
+
+----------------CLIENTE----------
 //implementar recebimento a foto em routes/clientes.js //
 
 //alterar update do cliente// ✔
 
-//fazer a sugunda tela de cadastro receber o id do cadastro da tela 1//
+//fazer a sugunda tela de cadastro receber o id do cadastro da tela 1// ✔
 -pegar o id do item retornado
 
-//definir var de ambiente do acesso ao banco//
--install dotenv para poder enxergar as var de ambiente
+//tratar erro de caso o usuario nao digitar nada na requisicao// ✔
 
-//tratar erro de caso o usuario nao digitar nada na requisicao//
+-----------------PET-------------------
 
-//apagar o idPet de cliente e adicionar idCli em pet// ✔
+//apagar o idPet de cliente e adicionar idCli em pet// ✔           
+
+
+---------------VACINA------------------
 
 //apagar idVacina de pet e adicionar idPet em vacina// ✔
 
-//fazer teste na api vacina//
+//fazer teste na api vacina// ✔  
+
+//add foreing key idPrestador e idFunc a tabela vacina// ✔
+
+//deixar api pronta para receber as chaves estrangeiras // ✔  
+
+//vincular as chaves ao com as tabela funcionario e prestador// ✔  
+
+
+------------PRESTADOR----------------------
+
+//crud prestadores// ✔                                                                     
+
+
+-----------FUNCIONARIO----------------------
+
+//crud funcionario// ✔                                                                        <======================================= 
+
+//vincular tabela de funcionario ao prestador// ✔
+
+//criar coluna bairro no cadastro do funcionario// ✔
+
+//tipodeprofissao necessita de insert em duas tabelas// ✔  
+
+--------ESTRUTURA---------------------
+
+//criar tabela tipoProfissao com colunas de cada profissao e coluna de escolha e o idDoFunc // ✔
+
+//tipoProfissao => funcionario => prestadores // ✔
+
+//criar prestadores dpois criar funcionario e dpois vincular a vacina// ✔  
+
+
+
+
+//------------------------------------------------------//
+
+--arrumar tabelas prestador, funcionario, vacina, pet -- ✔
+
+--inserir dados na tabela prestador-- ✔
+
+--add bairro,recepcionista,veterinario,Administrador,financeiro,idPrest na tabela funcionario-- ✔
+
+--add caluna status na tabela cliente, status= 'Pendente', 'Ok', 'RecSenha'-- ✔
+
+--alterar retorno da autenticação para verificar o status e ver se o cliente fez os dois passos do cadastro-- ✔
+
+--estudar sequelise e verificar se vale a pena implementar--
+
+
+
+
+
+
+
 
