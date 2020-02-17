@@ -134,5 +134,60 @@ router.get('/meuspets/:idCli', (req, res, next) => {       //rota passando param
     })
 });
 
+
+//-----------------------------------------divisor de teste------------------------------------------------------------------
+
+
+router.post('/test0', (req, res, next) => {       //rota passando parametro
+    mysql.getConnection((error, conn) => {
+        if(error){                                  //tratamento de erro da conexao
+            return res.status(500).send({ error: error})        
+        }
+        conn.query('select * from cliente where emailCli = ?',[req.body.email],
+            (error, resultado, fields) => {
+                conn.release();
+                if(error){                                  //tratamento de erro da query
+                    return res.status(500).send({ error: error})        
+                }
+
+                const resp = {                          //tratando o retorno
+                    Clientes: resultado.map(cli => {
+                        return{
+                            resEmail: cli.emailCli,
+                        }
+                    })
+                }
+
+                return res.status(200).send({response: resp.Clientes})
+            }
+        )
+    })
+});
+
+router.get('/test', (req, res, next) => { 
+    mysql.getConnection((error, conn) =>{
+        if(error){                                              //tratamento de erro da conexao
+            return res.status(500).send({ error: error})        
+        }
+        conn.query('select * from cliente where emailCli = ?;'),[req.body.email],
+        (error,result, field) => {
+            conn.release();
+            if(error){
+                return res.status(500).send({ error: error})
+            }
+
+           /* const resp = {                          //tratando o retorno
+                Clientes: result.map(cli => {
+                    return{
+                        resEmail: cli.emailCli,
+                    }
+                })
+            }*/
+
+            return res.status(200).send({response: result})           //retorna apenas o primeiro cliente encontrado
+        }
+    }) 
+});
+
 module.exports = router; 
 

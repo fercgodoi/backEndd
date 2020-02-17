@@ -1,7 +1,7 @@
 
 -----------------GERAL------------
-//definir var de ambiente do acesso ao banco//
--install dotenv para poder enxergar as var de ambiente
+//definir var de ambiente do acesso ao banco// ✔
+-install dotenv para poder enxergar as var de ambiente ✔
 
 //melhorar o retorno de erro// ✔
 
@@ -59,8 +59,6 @@
 //criar prestadores dpois criar funcionario e dpois vincular a vacina// ✔  
 
 
-
-
 //------------------------------------------------------//
 
 --arrumar tabelas prestador, funcionario, vacina, pet -- ✔
@@ -73,8 +71,180 @@
 
 --alterar retorno da autenticação para verificar o status e ver se o cliente fez os dois passos do cadastro-- ✔
 
+//--------------------------------------------------------------//
+
 --estudar sequelise e verificar se vale a pena implementar--
 
+--implementar esqueci minha senha com o armazenamento do nova senha randomica e enviar ao email do usuario para que ele logue por ela-- ✔
+//pesquisar se o usuario é existente e dpois na api fazer a senha random e alterar a senha e envia la para o email do usuario//------ ✔
+
+--implementar melhorias com tokens nos login--
+//implementar JWT tokens na autenticação
+
+--verificar se ja tem o email cadastrado no banco de dados para poder prosseguir com o cadastro-- ✔
+
+--pesquisar como mandar email no front end angular (nodemail)-- ✔
+//tem que alterar a senha e dpois enviar o email, nessa ordem//--- ✔
+//fazer ele verificar se o email e a senha estao certo e com isso enviar o email para o usuario//         <====================
+
+--na hora do cadastro se o usuario ja estiver cadastrado e o status dele estiver pendente entao redirecionar para cadastro passo2--  //DESCONTINUADO//
+
+--na hora do login se o usuario ja estiver cadastrado e o status dele estiver pendente entao redirecionar para cadastro passo2--    //DESCONTINUADO//
+
+--olhar o video passo8 do curso onde passar duas querys em uma mesma rota-- ✔
+
+--fazer os dados do cadastro passo 2 ser inserido no id correto, creio que precise do jwt--                 //DESCONTINUADO//
+//no front apos fazer o passo 1 ,salvamos em uma var o id do usuario e fazemos um update nesse id no passo2//   //DESCONTINUADO//
+
+--implementar upload de imagem-- ✔
+
+--organizar o cadastro pois agora nao sera necessario o passo2, apenas o passo1-- ✔
+//verifica se o email é existente, pq se for ira emitir uma msg de 'erro email ja cadastrado'// ✔
+//verificar se nao estiver cadastrado, ai salvamos o email e a senha e deixamos o status pendente e enviamos um codigo ao email do usuario, e redirecionamos ao login// ✔
+//apos ele fazer o login se o status estiver access ele pode entrar no app, se nao ele tera que colocar o codigo que foi enviado ao email dele// ✔
+//Status: first, access, full//
+//criar coluna codigoCli para verificação de email// ✔
+//criar coluna timeCodCli para armazenar o horario que o usuario enviou o codigo, que tem validade de 1 dia// ✔
+
+--falta colocar o envio de email-- ✔
+
+--passar o id do cliente por um tokken no verificar codigo-- ✔
+
+--autenticação de dois fatores-- +-
+
+--criptografia dos dados no banco-- ✔
+
+--Um dia corresponde a 86.400,000 milisegundos-- ✔
+
+--passar a senha do email como um var de ambiente--
+
+--encripta o token--
+
+--TERMINAR PELO AMOR DE DEUS A PARTE DO ESQUEÇI A SENHA ONDE ELE ENVIARA PARA O EMAIL A NOVA SENHA E ATUALIZARA O STATUS, E ASSIM QUE FIZER O CADASTRO NOVAMENTE SERA REDIRECIONADO PARA RENOVAR A SENHA--
+
+--esconder as rotas de api--
+
+--deixar tudo assincrono--
+
+--bcript so aceita formato string--
+
+--da reload na pagina do inicioPet apos cadastrar ou alterar dados do pet--
+
+
+---------------------------PART INICIAL(LOGIN)---------------------------------------
+
+*************TELAS************
+
+-inicio
+//inicio antigo
+
+-inicio2
+//email OK
+
+-login
+//-sub tela de confirmação de codigo caso precise
+
+-esqueceu-senha
+
+-cadastro-inicio
+//cadastro inicial do cliente
+
+-termo
+
+**************ANOTS**************
+
+--fazer tela de colocar a nova senha-- ✔
+
+
+-----------------------TELA HOME (TAB 1)--------------------------------------------
+
+*************TELAS************
+
+--home
+
+
+
+-----------------------PERFIL DO PET (TAB 2)--------------------------------------------
+
+*************TELAS************
+
+--inicio-pet
+
+-cadastro-pet
+
+- info-pet
+//informaçoes fisicas gerais do pet, editar perfil do pet
+
+-menu-pet
+//pagina com os topicos sobre o pet(agendamentos, vacinas, Infomaçoes)
+
+-vacina
+//pagina bem simples, passiva de melhorias 
+
+-peso
+//pagina bem simples, exibindo apenas o peso 
+
+
+**************ANOTS**************
+
+-colocar as paginas filhas do menu-pet nas rotas no tab 2-- ✔
+
+-terminar pagina menu-pet-- 
+
+-tabela historico no banco onde salvara todas as alteraçoes que o usuario fizer, peso, vacinas..-
+
+-colocar nas rotas para sempre que for alterar algo, salvar os dados antigo no banco historicoPet-
+
+-arrumar para exibir apenas as raças referentes a especie- 
+
+-exibir as imagens dos pets cadastrado referente ao cliente logado- ✔
+
+-Estudar como passar o id do animal pelas rotas- ✔
+//resposta esta no video de angular nº 44//
+
+-buscar pet especifico do tutor e buscar pet individual- ✔
+
+-subir imagem -
+
+-arrumar filtração das datas-
+
+-arrumar pagina de vacina-
+
+-organizar pagina de cadastro do Cliente-
+
+----------------------AGENDAMENTOS CALENDARIO (TAB 3)-----------------------------------
+-agendamento
+//do pet no prestador
+
+-conf-agendamento
+//recibo do pagamento contento hora, valor qr code
+/passivel de ser apagado
+
+- adicionar-cartao
+
+-meios-pagamentos
+//uma pagina contendo a descrição do prestador com os meios de pagamentos
+//incompleto
+
+-recibo
+//mesma coisa de conf de agendamento, ou seja apagar conf de agendamento
+//recibo do pagamento contento hora, valor qr code
+
+
+
+------------------------TAB 5--------------------------------------------------
+
+-cadastro-cliente
+//cadastro dos dados do cliente
+
+-cadastro-denuncio
+//denuncios de maus tratos
+
+- edit-perfil-cliente
+//passivel de ajustes
+
+-troca-senha
+//apos esta logado se o cliente desejar trocar senha
 
 
 
