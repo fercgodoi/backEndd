@@ -130,6 +130,8 @@
 
 --da reload na pagina do inicioPet apos cadastrar ou alterar dados do pet--
 
+--pegar img dos icones do tab para assim que clicado ele fique azul--
+
 
 ---------------------------PART INICIAL(LOGIN)---------------------------------------
 
@@ -193,7 +195,7 @@
 
 -tabela historico no banco onde salvara todas as alteraçoes que o usuario fizer, peso, vacinas..-
 
--colocar nas rotas para sempre que for alterar algo, salvar os dados antigo no banco historicoPet-
+-colocar nas telas rotas para sempre que for alterar algo, salvar os dados antigo no banco historicoPet-
 
 -arrumar para exibir apenas as raças referentes a especie- 
 
@@ -206,11 +208,21 @@
 
 -subir imagem -
 
--arrumar filtração das datas-
+-arrumar filtração das datas- ✔
 
--arrumar pagina de vacina-
+-arrumar pagina de vacina- 
 
--organizar pagina de cadastro do Cliente-
+-organizar pagina de cadastro do Cliente- 
+
+- na tela de cadastrar caso na aba de especie for escolhido Outros, apresentar mais dois campos abaixo para a pessoa digitar a especie ea raca--
+
+- deixar raca aparecendo na hora q inicar a pagina -
+
+-IMPLEMENTAR A VOLTA A PAGINA ANTERIOR--
+
+--colocar termos de uso nas tela de login--
+
+--alterar na api, na hora que for buscar as vacinas ja verificar se a data da proxima aplicação é menor que a data atual do sistema e assim fazer alteraçoes--
 
 ----------------------AGENDAMENTOS CALENDARIO (TAB 3)-----------------------------------
 -agendamento
@@ -252,3 +264,13 @@
 
 
 
+
+
+
+
+
+
+
+
+
+Criação da tela de vacinas, criar estrutura html com o design css, codificar a pagina com todas as funcionalidades, fazer conexao do front com o beck atraves da api para consumir os dados

@@ -7,7 +7,7 @@ const cors = require('cors')
 const rotaCliente = require('./routes/cliente/crudClientes')
 const rotaCadastroUser = require('./routes/cliente/cliente') 
 const rotaPet = require('./routes/pet/pet') 
-const rotaVacina = require('./routes/vacinas/crudVacinas')
+const rotaVacina = require('./routes/vacinas/vacina')
 const rotaPrestador = require('./routes/prestadores/prestador')
 const rotaFuncionario = require ('./routes/funcionarios/funcionario')
 
