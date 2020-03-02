@@ -8,6 +8,7 @@ const router = express.Router();
 const login = require('../../middleware/login');
 
 const vacinaController = require('../../controllers/vacinas/vacina-controller');
+const vacinaConfirma = require('../../controllers/vacinas/respostaVacina')
 
 router.post('/inserirVacina', login.obrigatorio, vacinaController.inserirVacina);
 
@@ -15,6 +16,15 @@ router.post('/atualizarVacina', login.obrigatorio, vacinaController.atualizarVac
 
 router.post('/buscarVacina', login.obrigatorio, vacinaController.buscarVacina); 
 
-router.post('/deletarVacina', login.obrigatorio, vacinaController.deletarVacina); 
+router.post('/deletarVacina', login.obrigatorio, vacinaController.deletarVacina);
+
+router.post('/confirmaVacina', vacinaController.confirmaVacina);
+
+
+//teste
+router.get('/respostaVacina/:token',login.vacinaPet, vacinaConfirma.EnviarVacVet);
+
+//teste//
+router.post('/teste', vacinaController.teste);
 
 module.exports = router; 

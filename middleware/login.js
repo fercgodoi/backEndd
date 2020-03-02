@@ -26,6 +26,20 @@ exports.opcional = (req, res, next)=> {
         next();
     }
 }
+
+exports.vacinaPet = (req, res, next)=> {
+
+    try{
+        const token = req.params.token;
+        const decode = jwt.verify(token, process.env.JWT_KEY); 
+        req.Vacina = decode;
+        next();
+    } catch (error) {
+        return res.status(401).send({mensagem: 'Ultrapassou o tempo limite, token', erroou: error.message})
+    }
+}
+
+
     /*let token = req.body.token;
     if (!token) return res.status(401).send({ message: 'No token provided.' });
     

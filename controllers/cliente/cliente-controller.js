@@ -70,7 +70,7 @@ exports.cadastroCliente = (req, res, next) => {       //rota passando parametro
                     conn.query('insert into cliente(nomeCli, emailCli, senhaCli, codigoCli, timeCodCli) values (?, ?, ?, ?, ?)',
                         [req.body.nome, req.body.email, hash, passRandom, timeCodCli],
                         (error, resultado, field)=> {                  //tratando o retorno
-                            conn.release();                            //IMPORTANTE release: liberar a conexao com a nossa query 
+                            conn.release();                            //IMPORTANTE release: fechar a conexao com a nossa query 
                             if(error){                                  //tratamento de erro da query
                                 return res.status(500).send({ error: error})        
                             }

@@ -216,13 +216,23 @@
 
 - na tela de cadastrar caso na aba de especie for escolhido Outros, apresentar mais dois campos abaixo para a pessoa digitar a especie ea raca--
 
-- deixar raca aparecendo na hora q inicar a pagina -
+- deixar raca aparecendo na hora q inicar a pagina - 
 
--IMPLEMENTAR A VOLTA A PAGINA ANTERIOR--
+-IMPLEMENTAR A VOLTA A PAGINA ANTERIOR-- ✔
 
 --colocar termos de uso nas tela de login--
 
 --alterar na api, na hora que for buscar as vacinas ja verificar se a data da proxima aplicação é menor que a data atual do sistema e assim fazer alteraçoes--
+
+--fazer com que ao preencher nova vacina, seja enviado um email ao veterinario, onde ele confirma ou nao a vacina--
+
+--buscar conteudo da tabela de vacinas que ficou no pc antigo para dar continuidade--
+
+--gerar token com as informaçoes da vacina para ao enviar o email ao vaterinario ele poder confirmar-- ?
+
+--saber quais campos realmente precisa conter na tela de add vacina--
+
+--alterar o status das vacinas nao confirmadas para -1 --
 
 ----------------------AGENDAMENTOS CALENDARIO (TAB 3)-----------------------------------
 -agendamento
