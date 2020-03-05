@@ -143,7 +143,7 @@ exports.loginCliente = (req, res, next) => {       //rota passando parametro
                 }
 
                 bcrypt.compare(req.body.senha, result[0].senhaCli, (err, resultCript)=> {           //comparando a senha hash com a senha enviada
-                    if(err){ return res.status(500).send({ error: 'falha na autenticação'}) }
+                    if(err){ return res.status(500).send( 'error: falha na autenticação') }
                     
                     if(resultCript){
                         
@@ -178,6 +178,7 @@ exports.loginCliente = (req, res, next) => {       //rota passando parametro
 
                             conn.query('update cliente set codigoCli= ?, timeCodCli = ? where emailCli = ? ',[passRandom, timeSist, response.Clientes[0].emailCli],
                                 (error, result, fields) => {
+                                    conn.release();
                                     if(error){                                  //tratamento de erro da query
                                         return res.status(500).send({ error: error})        
                                     }
@@ -227,6 +228,8 @@ exports.loginCliente = (req, res, next) => {       //rota passando parametro
                 
                 return res.status(500).send({ error: 'falha na autenticação'})
             })    
+
+            conn.release();
             } //termina aquii
         )     
     })
@@ -251,6 +254,7 @@ exports.authCod = (req, res, next) => {       //rota passando parametro
                 } else{
                     conn.query('update cliente set status_cli = ? where idCli = ? ;',['ok', req.cliente.idCliente],
                         (error, resultado, fields) => {
+                            conn.release();
                             if(error){                                  //tratamento de erro da query
                                 return res.status(500).send({ error: error})        
                             }
@@ -258,6 +262,7 @@ exports.authCod = (req, res, next) => {       //rota passando parametro
                         }
                     )
                 }
+                conn.release();
             }
         )     
     })
@@ -305,7 +310,7 @@ exports.recSenha = (req, res, next) => {
                                 
                         })
                 })
-
+                conn.release();
             })
     }) 
 }

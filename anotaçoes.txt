@@ -234,6 +234,24 @@
 
 --alterar o status das vacinas nao confirmadas para -1 --
 
+--colunas statusVacina e confirmaVacina passivel passivel de uma delas ficarem obsoletas--
+
+--alterar na api de buscar vacinas para ja atualizar, ou criar uma nova api que faça essa funcionalidade--
+
+--Criar campo lote da vacina no banco de dados e conectar a tudo------------            <================
+
+--buscar todos os dados(nomeVeterinario, email veterinario, crmv ) na requisição feita ao pegar as vacinas--
+
+--provalvel de salvar nomePet no localStorage--
+
+--pegar o nome do pet pela tela prontuario e guarda no localStorage--
+
+--corrigir datas CORRIGIR LOGOOO, VAI DA MUITO TRABALHO--
+
+--pequisar como cancelar token--
+
+--pesquisar como passar parametro ao abrir html no nodejs--
+
 ----------------------AGENDAMENTOS CALENDARIO (TAB 3)-----------------------------------
 -agendamento
 //do pet no prestador

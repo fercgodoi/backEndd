@@ -22,8 +22,8 @@ exports.inserirVacina = (req, res, next) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('insert into vacina(dataApliVacina, dataProxVacina, nomeVacina, qntDoseVacina, valorVacina, nomeVetVacina, emailVetVacina, crmvVetVacina, idPet)  values (?, ?, ?, ?, ?, ?, ?, ?, ?)',
-            [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.valorVacina, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, req.body.idPet],
+        conn.query('insert into vacina(dataApliVacina, dataProxVacina, nomeVacina, qntDoseVacina, loteVacina, valorVacina, nomeVetVacina, emailVetVacina, crmvVetVacina, idPet)  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+            [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.loteVacina, req.body.valorVacina, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, req.body.idPet],
                  (error, resultado, field)=> {      //tratando o retorno
                      conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
                      if(error){                                  //tratamento de erro da query
@@ -36,6 +36,7 @@ exports.inserirVacina = (req, res, next) => {
                         dataProxVacina: req.body.dataProxVacina,
                         nomeVacina: req.body.nomeVacina,
                         qntDoseVacina: req.body.qntDoseVacina,
+                        loteVacina: req.body.loteVacina,
                         nomePet: req.body.nomePet,
                         nomeVetVacina: req.body.nomeVetVacina,
                         emailVetVacina: req.body.emailVetVacina,
@@ -44,8 +45,10 @@ exports.inserirVacina = (req, res, next) => {
                         expiresIn:"48H"
                     });
 
+                    res.status(202).send({token: token})
+
                     //enviar o codigo pelo email//
-                    transporter.sendMail({
+                    /*transporter.sendMail({
                     from: "  One <oneforasteiro@gmail.com>",
                     to: req.body.emailVetVacina,               
                     subject: "O Agenda animal tem uma notificação para você",
@@ -64,14 +67,13 @@ exports.inserirVacina = (req, res, next) => {
                         <a href="http://localhost:3000/vacina/respostaVacina/${token}" target="_blank" >link</a>
                     </body>
                     </html>`
-                    /*EnviarVacVet(req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.nomePet, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, token)*/
-
+                    
                         }).then(message => {
                             res.status(202).send({ mensagem: message, resposta:'Vacina inserida com sucesso, aguardando confirmação do Profissional' })
                         }).catch(err =>{
                             res.status(404).send({ mensagem: "Falha", error: err})
-                        }) 
-
+                        }) */ 
+                        /*EnviarVacVet(req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.nomePet, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, token)*/
                      /* res.status(201).send({                          
                         mensagem: 'Vacina inserida com sucesso, aguardando confirmação do Profissional',
                         id_Vacina: resultado.insertId,                        //retorno do id de insert, proprio sql nos retorna
@@ -99,17 +101,55 @@ exports.atualizarVacina = (req, res, next) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('update vacina set dataApliVacina = ?, dataProxVacina = ?, nomeVacina = ?, qntDoseVacina = ?, valorVacina = ?, statusVacina = ?, confirmaVacina = ?, idPet = ?, idPrest = ?, idFunc = ? where idVacina = ?',
-                 [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.valorVacina, req.body.statusVacina, req.body.confirmaVacina, req.body.idPet, req.body.idPrest, req.body.idFunc, req.body.idVacina],
+        conn.query('update vacina set dataApliVacina = ?, dataProxVacina = ?, nomeVacina = ?, qntDoseVacina = ?, loteVacina = ?, valorVacina = ?,  nomeVetVacina = ?, emailVetVacina = ?, crmvVetVacina = ?, statusVacina = ?,  confirmaVacina = ? where idVacina = ?',
+                 [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.loteVacina, req.body.valorVacina, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, 'Pendente', 0 , req.body.idVacina],
                  (error, resultado, field)=> {      //tratando o retorno
                      conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
-                     res.status(201).send({                          
-                        mensagem: 'Vacina atualizada com sucesso',
-                        resp: "ok"                        //retorno do id de insert, proprio sql nos retorna
-                    })
+
+                    const token = jwt.sign({
+                        idVacina: req.body.idVacina,
+                        dataApliVacina: req.body.dataApliVacina,
+                        dataProxVacina: req.body.dataProxVacina,
+                        nomeVacina: req.body.nomeVacina,
+                        qntDoseVacina: req.body.qntDoseVacina,
+                        nomePet: req.body.nomePet,                      // <==================
+                        nomeVetVacina: req.body.nomeVetVacina,
+                        emailVetVacina: req.body.emailVetVacina,
+                        crmvVetVacina: req.body.crmvVetVacina
+                    }, process.env.JWT_KEY, {
+                        expiresIn:"48H"
+                    });
+
+                    //enviar o codigo pelo email//
+                    transporter.sendMail({
+                    from: "  One <oneforasteiro@gmail.com>",
+                    to: req.body.emailVetVacina,               
+                    subject: "O Agenda animal tem uma notificação para você",
+                    text: ``,
+                    html: `<!DOCTYPE HTML>
+                    <html lang=”pt-br”>
+                    <head>
+                    <meta charset=”UTF-8”>
+                    <link rel=”stylesheet” type=”text/css” href=”estilo.css”>
+                    <title></title>
+                    </head>
+                    <body>
+                        <h1>Ola Somos o Agenda animal!!</h1>
+                        <h3>Um tutor informa q vc vacinou um de seus animaizinhos, acesse o link a abaixo e confira</h3>
+                        
+                        <a href="http://localhost:3000/vacina/respostaVacina/${token}" target="_blank" >link</a>
+                    </body>
+                    </html>`
+
+                        }).then(message => {
+                            res.status(202).send({ mensagem: message, resposta:'Vacina atualizada com sucesso, aguardando confirmação do Profissional' })
+                        }).catch(err =>{
+                            res.status(404).send({ mensagem: "Falha", error: err})
+                        }) 
+
                 }
         )
     }) 
@@ -120,14 +160,14 @@ exports.deletarVacina =(req, res, next) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query(`delete from vacina where idVacina = ? `,[req.body.idCli],
+        conn.query(`delete from vacina where idVacina = ? `,[req.body.idVacina],
                  (error, resultado, field)=> {      //tratando o retorno
                      conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
                      if(error){                                  //tratamento de erro da query
-                        return res.status(500).send({ error: error})        
+                        return res.status(500).send({ error: error })        
                     }
                      res.status(202).send({                          
-                        mensagem: 'Cliente deletado com sucesso',
+                        mensagem: 'Vacina deletada com sucesso',
                         resp: "ok"                       //retorno do id de insert, proprio sql nos retorna
                     })
                 }
@@ -136,6 +176,7 @@ exports.deletarVacina =(req, res, next) => {
 };
 
 exports.buscarVacina = (req, res, next) => {       //rota passando parametro
+
     mysql.getConnection((error, conn) => {
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
@@ -148,6 +189,42 @@ exports.buscarVacina = (req, res, next) => {       //rota passando parametro
 
                 const response = {
                     Vacina: resultado.map(vac => {
+
+                        if(vac.confirmaVacina == 0){
+                            //continua pendente
+                            vac.statusVacina = 'Pendente'
+                        } else if(vac.confirmaVacina == -1) {
+                            //continua recusado
+                        } else 
+                        if(vac.dataProxVacina == undefined || vac.dataProxVacina == null || vac.dataProxVacina == '' ){
+                            //vac.statusVacina = 'Vigente'
+                            //continua vigente
+                        } else {
+                            var vacVencida = JSON.stringify(vac.dataProxVacina).substr(1,10)
+                            var vacVen = vacVencida.split('-').reverse()
+                            var data = new Date(vacVen[2], vacVen[1] - 1, vacVen[0]);
+                            //console.log(`dados passados ${data} e   ${ new Date()}`)
+                            if( new Date() > data ){
+                                vac.statusVacina = 'Vencida'
+                                conn.query('update vacina set statusVacina = ? where idVacina = ?;',[vac.statusVacina, vac.idVacina ], (error, resultado, fields) => {
+                                    if(error){                                  
+                                        return res.status(500).send({ error: error})        
+                                    }
+                                    //senao so continua
+                                })
+                            }else {
+                                vac.statusVacina = 'Vigente'
+                                conn.query('update vacina set statusVacina = ? where idVacina = ?;',[vac.statusVacina, vac.idVacina ], (error, resultado, fields) => {
+                                    if(error){                                  
+                                        return res.status(500).send({ error: error})        
+                                    }
+                                    //senao so continua
+                                })
+                            }
+                        }
+                       // vac.dataApliVacina = JSON.stringify(vac.dataApliVacina).substr(1,10).split('-').reverse().join('-')
+                       //deixar em formato brbr
+
                         return {
                             idVacina: vac.idVacina,
                             dataApliVacina: vac.dataApliVacina,
@@ -157,15 +234,20 @@ exports.buscarVacina = (req, res, next) => {       //rota passando parametro
                             valorVacina: vac.valorVacina,
                             statusVacina: vac.statusVacina,
                             confirmaVacina: vac.confirmaVacina,
+                            nomeVetVacina: vac.nomeVetVacina,
+                            emailVetVacina: vac.emailVetVacina,
+                            crmvVetVacina: vac.crmvVetVacina,
                             idPet: vac.idPet,
                             idPrest: vac.idPrest,
                             idFunc: vac.idFunc
                         };
+                        
                     })
                 };
-                return res.status(200).send({ response });
 
-             // return res.status(200).send({response: resultado})
+                //FAZER VERIFICAÇÃO SE A VACINA ESTA VENCIDA
+
+                return res.status(200).send({ response });
             }
         )
     })
@@ -174,12 +256,28 @@ exports.buscarVacina = (req, res, next) => {       //rota passando parametro
 
 exports.confirmaVacina = (req, res, next) => {
 
+    let status ;
+
+    if(req.body.confirmaVacina == 1){ status = "Vigente" }
+    if(req.body.confirmaVacina == -1 ){ status = "Recusada" }
+
     mysql.getConnection((error, conn) =>{
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query('update vacina set confirmaVacina = ? where idVacina = ?',
-                 [req.body.confirmaVacina, req.body.idVacina],
+        conn.query(`update vacina set dataApliVacina = ?, dataProxVacina = ?, nomeVacina = ?, qntDoseVacina = ?, loteVacina = ?, nomeVetVacina = ?, emailVetVacina = ?, crmvVetVacina = ?, confirmaVacina = ?, statusVacina = ?, observacaoVacina = ?  where idVacina = ?`,
+                 [req.body.dataApliVacina,
+                 req.body.dataProxVacina, 
+                 req.body.nomeVacina, 
+                 req.body.qntDoseVacina, 
+                 req.body.loteVacina, 
+                 req.body.nomeVetVacina, 
+                 req.body.emailVetVacina, 
+                 req.body.crmvVetVacina, 
+                 req.body.confirmaVacina,
+                 status,
+                 req.body.observacaoVacina, 
+                 req.body.idVacina],
                  (error, resultado, field)=> {      //tratando o retorno
                      conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
                      if(error){                                  //tratamento de erro da query
@@ -191,6 +289,11 @@ exports.confirmaVacina = (req, res, next) => {
     }) 
 };
 
+/*
+update vacina set confirmaVacina = ?, set statusVacina = ${status}, observacaoVacina = ? where idVacina = ?
+
+update vacina set dataApliVacina = ?, dataProxVacina = ?, nomeVacina = ?, qntDoseVacina = ?, loteVacina = ?, valorVacina = ?,  nomeVetVacina = ?, emailVetVacina = ?, crmvVetVacina = ?, statusVacina = ?,  confirmaVacina = ?, statusVacina = ${status}, observacaoVacina = ?  where idVacina = ?
+*/
 
 /*-----------------------------VERIFICAÇÃO DE DATA-----------------------
 
