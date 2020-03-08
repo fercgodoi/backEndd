@@ -13,40 +13,40 @@ exports.EnviarVacVet = (req, res, next) => {
         <h1>Ola Somos o Agenda animal!!</h1>
         <h3>Um tutor informa q vc vacinou um de seus animaizinhos, dê uma olhada nos dados e se for preciso altere, apos se estiver de acordo so selecionar confirmar e dar ok </h3>
     
+        <form>
         <label > Nome Veterinario: </label>
-        <input id='nomeVetVacina' value= ${req.Vacina.nomeVetVacina} >
+        <input id='nomeVetVacina' value= ${req.Vacina.nomeVetVacina} required>
         <p></p>
 
         <label > E-mail Veterinario: </label>
-        <input id='emailVetVacina' value= ${req.Vacina.emailVetVacina} > <br>
+        <input id='emailVetVacina' value= ${req.Vacina.emailVetVacina} required> <br>
         <p></p>
 
         <label > CRMV Veterinario: </label>
-        <input id='crmvVetVacina' value= ${req.Vacina.crmvVetVacina} > <br>
+        <input id='crmvVetVacina' value= ${req.Vacina.crmvVetVacina} required> <br>
         <p></p>
 
         <label > Nome da Vacina: </label>
-        <input id='nomeVacina' value= ${req.Vacina.nomeVacina} > <br>
+        <input id='nomeVacina' value= ${req.Vacina.nomeVacina} required> <br>
         <p></p>
 
         <label > Dosagem da Vacina: </label>
-        <input id='qntDoseVacina' value= ${req.Vacina.qntDoseVacina} > <br>
+        <input id='qntDoseVacina' value= ${req.Vacina.qntDoseVacina} required> <br>
         <p></p>
 
         <label > Lote da Vacina: </label>
-        <input id='loteVacina' value= ${req.Vacina.loteVacina} > <br>
+        <input id='loteVacina' value= ${req.Vacina.loteVacina} required> <br>
         <p></p>
 
         <label > Data da Vacinação: </label>
-        <input id='dataApliVacina' value= ${req.Vacina.dataApliVacina} > <br>
+        <input id='dataApliVacina' value= ${req.Vacina.dataApliVacina} required> <br>
         <p></p>
 
         <label > Data da Proxima vacina: </label>
-        <input id='dataProxVacina' value= ${req.Vacina.dataProxVacina} > <br>
+        <input id='dataProxVacina' value= ${req.Vacina.dataProxVacina} required> <br>
         <p></p>
 
         <label > Nome do Animal: ${req.Vacina.nomePet} </label>
-        <input id='nomePet' value= ${req.Vacina.nomePet} > <br>
         <p></p>
 
 
@@ -71,7 +71,7 @@ exports.EnviarVacVet = (req, res, next) => {
         <p></p>
     
         <button type='button'  onclick='enviar()'>OK</button>
-    
+        </form>
         <p></p>
     
         <div id='resp' ></div>

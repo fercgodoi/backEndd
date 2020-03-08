@@ -25,15 +25,18 @@ exports.inserirVacina = (req, res, next) => {
         conn.query('insert into vacina(dataApliVacina, dataProxVacina, nomeVacina, qntDoseVacina, loteVacina, valorVacina, nomeVetVacina, emailVetVacina, crmvVetVacina, idPet)  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
             [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.loteVacina, req.body.valorVacina, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, req.body.idPet],
                  (error, resultado, field)=> {      //tratando o retorno
-                     conn.release();                //IMPORTANTE release: liberar a conexao com a nossa query 
+                     conn.release();                //IMPORTANTE release: Feacha conexao com o banco
                      if(error){                                  //tratamento de erro da query
                         return res.status(500).send({ error: error})        
                     }
 
+                    var dataApliVacina = req.body.dataApliVacina.split('-').reverse().join('-'); //colocando a data para o formato dd/mm/yyyy
+                    var dataProxVacina = req.body.dataProxVacina.split('-').reverse().join('-');
+
                     const token = jwt.sign({
                         idVacina: resultado.insertId,
-                        dataApliVacina: req.body.dataApliVacina,
-                        dataProxVacina: req.body.dataProxVacina,
+                        dataApliVacina: dataApliVacina,
+                        dataProxVacina: dataProxVacina,
                         nomeVacina: req.body.nomeVacina,
                         qntDoseVacina: req.body.qntDoseVacina,
                         loteVacina: req.body.loteVacina,
@@ -48,7 +51,7 @@ exports.inserirVacina = (req, res, next) => {
                     res.status(202).send({token: token})
 
                     //enviar o codigo pelo email//
-                    /*transporter.sendMail({
+                    transporter.sendMail({
                     from: "  One <oneforasteiro@gmail.com>",
                     to: req.body.emailVetVacina,               
                     subject: "O Agenda animal tem uma notificação para você",
@@ -72,7 +75,7 @@ exports.inserirVacina = (req, res, next) => {
                             res.status(202).send({ mensagem: message, resposta:'Vacina inserida com sucesso, aguardando confirmação do Profissional' })
                         }).catch(err =>{
                             res.status(404).send({ mensagem: "Falha", error: err})
-                        }) */ 
+                        }) 
                         /*EnviarVacVet(req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.nomePet, req.body.nomeVetVacina, req.body.emailVetVacina, req.body.crmvVetVacina, token)*/
                      /* res.status(201).send({                          
                         mensagem: 'Vacina inserida com sucesso, aguardando confirmação do Profissional',
@@ -109,10 +112,13 @@ exports.atualizarVacina = (req, res, next) => {
                         return res.status(500).send({ error: error})        
                     }
 
+                    var dataApliVacina = req.body.dataApliVacina.split('-').reverse().join('-'); //colocando a data para o formato dd/mm/yyyy
+                    var dataProxVacina = req.body.dataProxVacina.split('-').reverse().join('-');
+
                     const token = jwt.sign({
                         idVacina: req.body.idVacina,
-                        dataApliVacina: req.body.dataApliVacina,
-                        dataProxVacina: req.body.dataProxVacina,
+                        dataApliVacina: dataApliVacina,
+                        dataProxVacina: dataProxVacina,
                         nomeVacina: req.body.nomeVacina,
                         qntDoseVacina: req.body.qntDoseVacina,
                         nomePet: req.body.nomePet,                      // <==================
@@ -150,6 +156,7 @@ exports.atualizarVacina = (req, res, next) => {
                             res.status(404).send({ mensagem: "Falha", error: err})
                         }) 
 
+                        //res.status(202).send({ resposta:'Vacina atualizada com sucesso, aguardando confirmação do Profissional' })
                 }
         )
     }) 
@@ -231,6 +238,7 @@ exports.buscarVacina = (req, res, next) => {       //rota passando parametro
                             dataProxVacina: vac.dataProxVacina,
                             nomeVacina: vac.nomeVacina,
                             qntDoseVacina: vac.qntDoseVacina,
+                            loteVacina: vac.loteVacina,
                             valorVacina: vac.valorVacina,
                             statusVacina: vac.statusVacina,
                             confirmaVacina: vac.confirmaVacina,
@@ -260,6 +268,7 @@ exports.confirmaVacina = (req, res, next) => {
 
     if(req.body.confirmaVacina == 1){ status = "Vigente" }
     if(req.body.confirmaVacina == -1 ){ status = "Recusada" }
+    if(req.body.dataProxVacina == '' || req.body.dataProxVacina == null || req.body.dataProxVacina == undefined){ req.body.dataProxVacina = null}
 
     mysql.getConnection((error, conn) =>{
         if(error){                                  //tratamento de erro da conexao
