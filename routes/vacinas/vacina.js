@@ -21,7 +21,6 @@ router.post('/deletarVacina', login.obrigatorio, vacinaController.deletarVacina)
 router.post('/confirmaVacina', vacinaController.confirmaVacina);
 
 
-//teste
 router.get('/respostaVacina/:token',login.vacinaPet, vacinaConfirma.EnviarVacVet);
 
 //teste//
