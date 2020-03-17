@@ -138,6 +138,8 @@
 
 --IMPLEMENTAR SEQUELIZE--
 
+--organizar o envio de email em um so arquivo--
+
 ---------------------------PART INICIAL(LOGIN)---------------------------------------
 
 *************TELAS************

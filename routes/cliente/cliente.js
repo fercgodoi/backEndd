@@ -9,9 +9,13 @@ const login = require('../../middleware/login');
 
 const clienteController = require('../../controllers/cliente/cliente-controller');
 
-router.post('/cad', clienteController.cadastroCliente);
+const clienteLogin = require('../../controllers/cliente/cliente-login')
+
+const ClienteCadastro = require('../../controllers/cliente/cliente-cadastro')
+
+router.post('/cad', ClienteCadastro.cadastroCliente);
+router.post('/login', clienteLogin.loginCliente);
 router.post('/passo2', login.obrigatorio, clienteController.atualizarCliente);
-router.post('/login', clienteController.loginCliente);
 router.post('/authCod', login.obrigatorio, clienteController.authCod);
 router.post('/recSenha', clienteController.recSenha);
 router.post('/AltSenha', login.obrigatorio, clienteController.AlterarSenha);
@@ -19,7 +23,7 @@ router.post('/AltSenha', login.obrigatorio, clienteController.AlterarSenha);
 
 //-----------------------BLOCO DE UPLOAD IMAGEM----------//
 
-const storage = multer.diskStorage({
+/*const storage = multer.diskStorage({
     destination: function(req, file, cb){
         cb(null, './uploads');
     },
@@ -42,7 +46,7 @@ const upload = multer({
         fileSize: 1024 * 1024 * 5                   //limitando o tamanho da imagem p 5mb
     },
     fileFilter: fileFitro
-});
+}); */
 
 //---------------------------------BLOCO EMAIL------------------------------------------------------//
 /*

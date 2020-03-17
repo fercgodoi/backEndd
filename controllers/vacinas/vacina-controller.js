@@ -268,20 +268,16 @@ exports.confirmaVacina = (req, res, next) => {
 
     if(req.body.confirmaVacina == 1){ status = "Vigente" }
     if(req.body.confirmaVacina == -1 ){ status = "Recusada" }
-    if(req.body.dataProxVacina == '' || req.body.dataProxVacina == null || req.body.dataProxVacina == undefined){ req.body.dataProxVacina = null}
 
     mysql.getConnection((error, conn) =>{
         if(error){                                  //tratamento de erro da conexao
             return res.status(500).send({ error: error})        
         }
-        conn.query(`update vacina set dataApliVacina = ?, dataProxVacina = ?, nomeVacina = ?, qntDoseVacina = ?, loteVacina = ?, nomeVetVacina = ?, emailVetVacina = ?, crmvVetVacina = ?, confirmaVacina = ?, statusVacina = ?, observacaoVacina = ?  where idVacina = ?`,
-                 [req.body.dataApliVacina,
-                 req.body.dataProxVacina, 
-                 req.body.nomeVacina, 
+        conn.query(`update vacina set nomeVacina = ?, qntDoseVacina = ?, loteVacina = ?, nomeVetVacina = ?, crmvVetVacina = ?, confirmaVacina = ?, statusVacina = ?, observacaoVacina = ?  where idVacina = ?`,
+                 [req.body.nomeVacina, 
                  req.body.qntDoseVacina, 
                  req.body.loteVacina, 
-                 req.body.nomeVetVacina, 
-                 req.body.emailVetVacina, 
+                 req.body.nomeVetVacina,
                  req.body.crmvVetVacina, 
                  req.body.confirmaVacina,
                  status,
