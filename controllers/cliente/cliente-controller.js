@@ -40,7 +40,7 @@ let transporter = nodemailer.createTransport({                  //configurando a
     secure: true,
     auth: {
         user: "oneforasteiro@gmail.com",
-        pass: "largatixa"                                       
+        pass: process.env.EMAIL_KEY                                       
     }
 });
 
@@ -49,56 +49,49 @@ let transporter = nodemailer.createTransport({                  //configurando a
 function getRandomInt() { return Math.floor(Math.random() * (999999 - 100000)) + 100000; }
 
 exports.cadastroCliente = (req, res, next) => {       //rota passando parametro
-    mysql.getConnection((error, conn) => {
-        if(error){                                  //tratamento de erro da conexao
-            return res.status(500).send({ error: error})        
-        } 
-        conn.query('select * from cliente where emailCli = ?',[req.body.email],
-            (error, resultado, fields) => {
-                if(error){                                  //tratamento de erro da query
-                    return res.status(500).send({ error: error})        
-                }
-                if(resultado.length > 0 ){
-                    return res.status(409).send("Usuario ja existente")    //nao aceita, usuario ja existente
-                }
-
-                let passRandom = getRandomInt();
-                let timeCodCli = Date.now();
-                    //return res.status(200).send("1")    //aceito
-                bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) =>{
-                    if(errBcrypt){ return res.status(500).send({ error: errBcrypt }) }
-                    conn.query('insert into cliente(nomeCli, emailCli, senhaCli, codigoCli, timeCodCli) values (?, ?, ?, ?, ?)',
-                        [req.body.nome, req.body.email, hash, passRandom, timeCodCli],
-                        (error, resultado, field)=> {                  //tratando o retorno
-                            conn.release();                            //IMPORTANTE release: fechar a conexao com a nossa query 
-                            if(error){                                  //tratamento de erro da query
-                                return res.status(500).send({ error: error})        
-                            }
-
-                            //return res.status(200).send({response: resultado})
-
-                            transporter.sendMail({
-                                from: "  One <oneforasteiro@gmail.com>",
-                                to: req.body.email,               
-                                subject: "Recuperar senha",
-                                text: `Faça login novamente no app com esta senha: ${passRandom}`
-                                //html: "caso precise vc pode passar um html, fica mais bonito e creio que podemos passar informaçoes nesse html sobre redirecionar p outra api"
-                            }).then(message => {
-                                res.status(202).send({ 
-                                    mensagem: message, 
-                                    message:'Bem vindo ao app, enviamos um codigo ao seu email',
-                                    resultado: resultado
-                                })
-                            }).catch(err =>{
-                                res.status(404).send({ mensagem: "nao deu", error: err, email: req.body.email})
-                            }) 
-                            //COLOCAR CODIGO P ENVIAR EMAIL                 <========================FEITOOOOOOOO
-
-                        }
-                    )
-                })     
-            }
-        )
+     mysql.getConnection((error, conn) => {
+        if (error) { //tratamento de erro da conexao
+            return res.status(500).send({ error: error });
+        }
+        conn.query('select * from cliente where emailCli = ?', [req.body.email], (error, resultado, fields) => {
+             if (error) { //tratamento de erro da query
+                 return res.status(500).send({ error: error });
+             }
+             if (resultado.length > 0) {
+                 return res.status(409).send("Usuario ja existente"); //nao aceita, usuario ja existente
+             }
+             let passRandom = getRandomInt();
+             let timeCodCli = Date.now();
+             //return res.status(200).send("1")    //aceito
+             bcrypt.hash(req.body.senha, 10, (errBcrypt, hash) => {
+                 if (errBcrypt) {
+                     return res.status(500).send({ error: errBcrypt });
+                 }
+                 conn.query('insert into cliente(nomeCli, emailCli, senhaCli, codigoCli, timeCodCli) values (?, ?, ?, ?, ?)', [req.body.nome, req.body.email, hash, passRandom, timeCodCli], (error, resultado, field) => {
+                     conn.release(); //IMPORTANTE release: fechar a conexao com a nossa query 
+                     if (error) { //tratamento de erro da query
+                         return res.status(500).send({ error: error });
+                     }
+                     //return res.status(200).send({response: resultado})
+                     transporter.sendMail({
+                         from: "  One <oneforasteiro@gmail.com>",
+                         to: req.body.email,
+                         subject: "Recuperar senha",
+                         text: `Faça login novamente no app com esta senha: ${passRandom}`
+                         //html: "caso precise vc pode passar um html, fica mais bonito e creio que podemos passar informaçoes nesse html sobre redirecionar p outra api"
+                     }).then(message => {
+                         res.status(202).send({
+                             mensagem: message,
+                             message: 'Bem vindo ao app, enviamos um codigo ao seu email',
+                             resultado: resultado
+                         });
+                     }).catch(err => {
+                         res.status(404).send({ mensagem: "nao deu", error: err, email: req.body.email });
+                     });
+                     //COLOCAR CODIGO P ENVIAR EMAIL                 <========================FEITOOOOOOOO
+                 });
+             });
+         });
     })
 }
 
@@ -145,7 +138,7 @@ exports.loginCliente = (req, res, next) => {       //rota passando parametro
                 bcrypt.compare(req.body.senha, result[0].senhaCli, (err, resultCript)=> {           //comparando a senha hash com a senha enviada
                     if(err){ return res.status(500).send( 'error: falha na autenticação') }
                     
-                    if(resultCript){
+                    if(resultCript){        //CORRIGIR AQUI , PROVAVEL DE UMA PROMISSE
                         
                     const token = jwt.sign({
                         idCliente: result[0].idCli,
@@ -182,19 +175,19 @@ exports.loginCliente = (req, res, next) => {       //rota passando parametro
                                     if(error){                                  //tratamento de erro da query
                                         return res.status(500).send({ error: error})        
                                     }
-                                    return res.status(200).send({ message: 'Seu codigo expirou, enviamos um novo codigo para seu email'})
+                                    //return res.status(200).send({ message: 'Seu codigo expirou, enviamos um novo codigo para seu email'})
                                     //enviar o codigo pelo email//
-                                    /* transporter.sendMail({
+                                     transporter.sendMail({
                                         from: "  One <oneforasteiro@gmail.com>",
                                         to: response.Clientes[0].emailCli,               
                                         subject: "Codigo de verificação",
                                         text: `Faça login novamente no app com esta senha: ${passRandom}`
                                         //html: "caso precise vc pode passar um html, fica mais bonito e creio que podemos passar informaçoes nesse html sobre redirecionar p outra api"
                                     }).then(message => {
-                                        res.status(202).send({ mensagem: message})
+                                        res.status(202).send({ mensagem: message, message: 'Seu codigo expirou, enviamos um novo codigo para seu email' })
                                     }).catch(err =>{
                                         res.status(404).send({ mensagem: "nao deu"})
-                                    }) */
+                                    }) 
 
                                 }
                             ) 
@@ -254,7 +247,7 @@ exports.authCod = (req, res, next) => {       //rota passando parametro
                 } else{
                     conn.query('update cliente set status_cli = ? where idCli = ? ;',['ok', req.cliente.idCliente],
                         (error, resultado, fields) => {
-                            conn.release();
+                            //conn.release();
                             if(error){                                  //tratamento de erro da query
                                 return res.status(500).send({ error: error})        
                             }
@@ -262,9 +255,10 @@ exports.authCod = (req, res, next) => {       //rota passando parametro
                         }
                     )
                 }
-                conn.release();
+                
             }
-        )     
+        )    
+         conn.release();
     })
 }
 
@@ -282,7 +276,7 @@ exports.recSenha = (req, res, next) => {
                     return res.status(404).send({ msg: "Usuario nao encontrado"})
                 }
 
-                let passRandom = String(getRandomInt()) ;
+                let passRandom = String(getRandomInt()) ;           //colocando formato br//
                 console.log(passRandom)
 
                 bcrypt.hash(passRandom, 10, (err, hash) =>{
@@ -290,7 +284,7 @@ exports.recSenha = (req, res, next) => {
                 
                         conn.query(`update cliente set senhaCli = ?, status_cli = ? where emailCli = ? `, [hash, 'key', req.body.email],
                             (error, resultado, field)=> {     
-                                conn.release();                
+                                //conn.release();                
                                 if(error){                
                                     return res.status(500).send({ error: error})         
                                 }

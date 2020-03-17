@@ -134,6 +134,9 @@
 
 --alterar os campos de datas do banco para varchar de 20--
 
+--implementar tela de carregamento nas paginas--
+
+--IMPLEMENTAR SEQUELIZE--
 
 ---------------------------PART INICIAL(LOGIN)---------------------------------------
 
@@ -261,6 +264,10 @@
 --TRABALHAR A DATA PARA DEIXAR NO FORMATO NORMAL DD/MM/YYYY
 
 --comecar a vincular todas as novas telas e gerar o apk, teste no pc primeiro--
+
+--deixar a tela do veterinario aceitar a vacina para ele apenas aceitar ou nao, e apenas colocar uma observação--
+
+--Provavel de remover o service do menu-pet--
 
 ----------------------AGENDAMENTOS CALENDARIO (TAB 3)-----------------------------------
 -agendamento

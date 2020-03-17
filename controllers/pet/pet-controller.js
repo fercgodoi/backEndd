@@ -44,7 +44,7 @@ exports.inserirPet = (req, res, next) => {
 exports.buscarPets = (req, res, next) => {       //rota passando parametro
     mysql.getConnection((error, conn) => {
         if(error){                                  //tratamento de erro da conexao
-            return res.status(500).send({ error: error})        
+            return res.status(500).send({ error: error})       
         }
        conn.query('select * from pet where idCli = ?;', [req.cliente.idCliente], //select * from pet where nomePet = ?;
             (error, resultado, fields) => {
@@ -52,6 +52,10 @@ exports.buscarPets = (req, res, next) => {       //rota passando parametro
                 if (error) { //tratamento de erro da query
                     return res.status(500).send({ error: error });
                 }
+                //VERIFICAR SE O RETORNO VOLTA 0 PETS, POR ISSO DA ERRO NO SERVER// feitoo
+               /* if(resultado.length > 1){
+                    return res.status(404).send({ response, msg:"Nao tem pets" });
+                } else {*/
                 const response = {
                     Clientes: resultado.map(pet => {
                         return  {
@@ -74,6 +78,7 @@ exports.buscarPets = (req, res, next) => {       //rota passando parametro
                     })
                 };
                 return res.status(200).send({ response });
+               // }
             })
     })
 };
