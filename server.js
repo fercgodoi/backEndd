@@ -21,6 +21,7 @@ require('dotenv').config()
 
 const port = process.env.PORT || 3000;
 const server = http.createServer(app);
+<<<<<<< HEAD
 app.io.attach(server);
 //----socket io----//
 
@@ -54,5 +55,7 @@ app.io.attach(server);
 
 //-----------//
 
+=======
+>>>>>>> fbe9456689e9e11b5a2ce02712a02b75a8edf8bd
 console.log('serve rodando');
 server.listen(port);
