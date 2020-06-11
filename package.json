@@ -27,9 +27,5 @@
   "devDependencies": {
     "nodemon": "^2.0.2"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+ssh://git@bitbucket.org/agenda-animal/api-agendaanimal.git"
-  },
   "homepage": "https://bitbucket.org/agenda-animal/api-agendaanimal#readme"
 }
