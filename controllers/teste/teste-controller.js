@@ -4,7 +4,7 @@ const mysql = require('../../mysql').pool;
 exports.SelectAgendamento = (req, res, next) => {
     mysql.getConnection((error, conn) =>{
         if(error){return res.json({ error: error})}          
-        conn.query('insert into agendamento values(0,"2020-06-01","17:59:00","tosa","sadfgh","sadfgh","Negado","","7","1","5")',
+        conn.query('desc funcionarios',
             (error, resultado, field)=> {
                 if(error){return res.json({ error: error})} 
                 return res.json({resultado})
