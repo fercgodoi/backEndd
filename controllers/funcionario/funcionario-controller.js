@@ -238,12 +238,12 @@ exports.CodFunc = (req, res, next) => {       //rota passando parametro
     mysql.getConnection((error, conn) => {
         if(error){ return res.json({ error: "error sql"}) } 
 
-        conn.query('select * from funcionario where CpfFunc = ? and CodFunc = ?',[ req.body.CpfFunc , req.body.CodFunc],
+        conn.query('select * from funcionario where CpfFunc = ?',[ req.body.CpfFunc , req.body.CodFunc],
             (error, result, fields) => {
                 if(error){ return res.json({ error: error}) } 
 
                 if(result.length == 0){
-                    return  res.json({ message: "Código incorreto"})
+                    return  res.json({ message: result})
                 } 
 
                 conn.query('update funcionario set StatusFunc = ? where CpfFunc = ? ',['Confirmado', req.body.CpfFunc],
