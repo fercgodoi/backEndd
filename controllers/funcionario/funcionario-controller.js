@@ -240,7 +240,7 @@ exports.CodFunc = (req, res, next) => {       //rota passando parametro
 
         conn.query('select * from funcionario where CpfFunc = ? and CodFunc = ?',[ req.body.CpfFunc , req.body.CodFunc],
             (error, result, fields) => {
-                if(error){ return res.json({ error: "error sql"}) } 
+                if(error){ return res.json({ error: error}) } 
 
                 if(result.length == 0){
                     return  res.json({ message: "Código incorreto"})
@@ -248,7 +248,7 @@ exports.CodFunc = (req, res, next) => {       //rota passando parametro
 
                 conn.query('update funcionario set StatusFunc = ? where CpfFunc = ? ',['Confirmado', req.body.CpfFunc],
                     (error, resultado, fields) => {
-                        if(error){ return res.json({ error: "error sql"}) } 
+                        if(error){ return res.json({ error: error}) } 
 
                         conn.release();
                         return  res.json({message: "Código confirmado"}) 
