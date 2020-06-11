@@ -89,7 +89,8 @@ exports.LoginFunc = (req, res, next) => {
                                     response: response.Funcionarios[0].idFunc,
                                     message: "Confirmar Codigo",
                                     token: token,
-                                    acesso:response.Funcionarios[0].AcessoFunc
+                                    acesso:response.Funcionarios[0].AcessoFunc,
+                                    req: response.Funcionarios[0]
                                 })
                             } 
                     }else if(response.Funcionarios[0].StatusFunc === 'Pendente'){
