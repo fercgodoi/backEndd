@@ -4,13 +4,17 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const cors = require('cors')
 
-const rotaCliente = require('./routes/cliente/crudClientes')
-const rotaCadastroUser = require('./routes/cliente/cliente') 
-const rotaPet = require('./routes/pet/pet') 
-const rotaVacina = require('./routes/vacinas/vacina')
-const rotaPrestador = require('./routes/prestadores/prestador')
-const rotaFuncionario = require ('./routes/funcionarios/funcionario')
+app.io = require('socket.io')()
 
+const RotaAgendamento = require('./routes/agendamento/agendamento')
+const rotaFuncionario = require('./routes/funcionario/funcionario') 
+const rotaProduto = require('./routes/produto/produto')
+const rotaPrestador = require('./routes/prestador/prestador')
+const rotaVacina = require('./routes/vacinas/vacina')
+const rotaMedicacao = require('./routes/medicamento/medicamento')
+const rotaProntuario = require('./routes/prontuario/prontuario')
+const rotaExame = require('./routes/exame/exame')
+const rotaTeste = require('./routes/teste/teste')
 
 app.use(cors());                                        //libera o acesso para determinados dominios
 app.use(morgan('dev'));                                 //da uma informação no console sobre a requisição(callback)//s
@@ -28,13 +32,19 @@ app.use((req, res, next) => {                           //implemetando o cors//
     next();                                             //para poder passar a baixo quando vir o request//
 });
 
-app.use('/cliente', rotaCliente);
-app.use('/cadastro', rotaCadastroUser);
-app.use('/pet', rotaPet);
-app.use('/vacina', rotaVacina);
-app.use('/prestador', rotaPrestador);
-app.use('/funcionario', rotaFuncionario);
-app.use('/uploads', express.static('uploads'));         //deixando o diretorio uploads disponivel publicamente, p poder ser visualizado no navegador//
+
+
+
+app.use('/Agendamento', RotaAgendamento);       //deixando o diretorio uploads disponivel publicamente, p poder ser visualizado no navegador//
+app.use('/Funcionario', rotaFuncionario); 
+app.use('/Prestador', rotaPrestador); 
+app.use('/Produto', rotaProduto); 
+app.use('/Vacina', rotaVacina); 
+app.use('/Medicamento', rotaMedicacao); 
+app.use('/Prontuario', rotaProntuario); 
+app.use('/Exame', rotaExame); 
+app.use('/Teste', rotaTeste); 
+
 
  //quando nao encontra rota cai aqui//
 app.use((req, res, next)=> {                        //tratamento de erro//

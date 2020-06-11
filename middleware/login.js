@@ -2,60 +2,23 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 exports.obrigatorio = (req, res, next)=> {
-
     try{
         const token = req.headers.authorization.split(' ')[1];
-        //const decode = jwt.verify(req.body.token, process.env.JWT_KEY);
-        //const token = req.headers.jwt;
         const decode = jwt.verify(token, process.env.JWT_KEY); 
-        req.cliente = decode;
+        req.funcionario = decode;
         next();
     } catch (error) {
-        return res.status(401).send({mensagem: 'falha na autenticação do token', erroou: error.message})
+        return res.json({error: 'falha na autenticação do token'})
     }
 }
 
-exports.opcional = (req, res, next)=> {
-
+exports.inicio = (req, res, next)=> {
     try{
         const token = req.headers.authorization.split(' ')[1];
-        const decode = jwt.verify(token, process.env.JWT_KEY);
-        req.cliente = decode;
-        next();
-    } catch (error) {
-        next();
-    }
-}
-
-exports.vacinaPet = (req, res, next)=> {
-
-    try{
-        const token = req.params.token;
         const decode = jwt.verify(token, process.env.JWT_KEY); 
-        req.Vacina = decode;
+        req.prestadores = decode;
         next();
     } catch (error) {
-        return res.status(401).send({mensagem: 'Ultrapassou o tempo limite, token', erroou: error.message})
+        return res.json({error: 'falha na autenticação do token',err :error})
     }
 }
-
-
-    /*let token = req.body.token;
-    if (!token) return res.status(401).send({ message: 'No token provided.' });
-    
-    jwt.verify(token, process.env.JWT_KEY, function(err, decoded) {
-      if (err) return res.status(500).send({ auth: false, message: 'Failed to authenticate token.' });
-      
-      // se tudo estiver ok, salva no request para uso posterior
-      req.user = decoded;
-      next();
-    }); */
-   
-
-    /*try{
-        const decode = jwt.verify(req.body.token, process.env.JWT_KEY);
-        req.cliente = decode;
-        next();
-    } catch (error) {
-        return res.status(401).send({mensagem: 'falha na autenticação do token', error: error})
-    } */
