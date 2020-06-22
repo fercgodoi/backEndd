@@ -107,12 +107,18 @@ exports.CadSegPrest = (req, res, next) => {
 exports.CadTercPrest = (req, res, next) => {       
     mysql.getConnection((error, conn) =>{
         if(error){return res.json({ error:'error sql'})}
+        conn.query('insert into IdHorarioPrest (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
+            (error, resultHorario, field)=> {
+            if(error){ return res.json({ error: "error sql"}) }  
 
-        conn.query('update prestadores set NomeFantsPrest=?,PetShopPrest=?,ClinicaPrest=?,PasseadorPrest=?,HotelPrest=?,CepPrest=?,NumPrest=? where EmailPrest= ?', [req.body.NomeFantsPrest,req.body.PetShopPrest,req.body.ClinicaPrest,req.body.PasseadorPrest,req.body.HotelPrest,req.body.CepPrest,req.body.NumPrest,req.prestadores.EmailPrest],
-        (error, resulta, field)=> {
-            conn.release(); 
-            if(error){return res.json({ error:'error sql'})}            
-            return res.json({ message: "Alterado"})
+            let idHorarios = resultHorario.insertId; 
+
+            conn.query('update prestadores set NomeFantsPrest=?,PetShopPrest=?,ClinicaPrest=?,PasseadorPrest=?,HotelPrest=?,CepPrest=?,descricaoPrest=?, NumPrest=?,IdHorarioPrest=?,longitude=?,latitude=? where EmailPrest= ?', [req.body.NomeFantsPrest,req.body.PetShopPrest,req.body.ClinicaPrest,req.body.PasseadorPrest,req.body.HotelPrest,req.body.CepPrest,req.body.descricaoPrest,req.body.NumPrest,idHorarios,req.body.longitude,req.body.latitude,req.prestadores.EmailPrest],
+            (error, resulta, field)=> {
+                conn.release(); 
+                if(error){return res.json({ error:'error sql'})}            
+                return res.json({ message: "Alterado"})
+            })
         })
     })
 }
@@ -168,7 +174,7 @@ exports.CadSeisPrest = (req, res, next) => {
     mysql.getConnection((error, conn) =>{
         if(error){return res.json({ error:'error sql'})}
 
-        conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp,EmailResp,VetResp,CRMVResp,DataEmiResp)values(?,?,?,?,?,?,?,?)',[req.prestadores.id,req.body.NomeResp,req.body.CpfResp,req.body.CelResp,req.body.EmailResp,req.body.VetResp,req.body.CRMVResp,req.body.DataEmiResp],
+        conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp,VetResp,CRMVResp,DataEmiResp)values(?,?,?,?,?,?,?,?)',[req.prestadores.id,req.body.NomeResp,req.body.CpfResp,req.body.CelResp,req.body.VetResp,req.body.CRMVResp,req.body.DataEmiResp],
         (error, resulta, field)=> { 
             conn.release();
             if(error){return res.json({ error:'error sql'})}  

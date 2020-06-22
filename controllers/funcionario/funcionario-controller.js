@@ -156,7 +156,6 @@ exports.CadastroFuncionario = (req, res, next) => {
                 if(error){ return res.json({ error: "error sql"}) } 
                 
                 let idHorarios = resultHorario.insertId; 
-                console.log(idHorarios);
                     if(req.body.CRMVFunc != "" && req.body.CRMVFunc != null && req.body.CRMVFunc != undefined)
                     {
                         conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
@@ -190,10 +189,8 @@ exports.CadastroFuncionario = (req, res, next) => {
                                             return res.json({ message: "nao deu", error : err})
                                         })                                    
                                     }
-                                )
-                                
+                                )                                
                             }) 
-
                             
                         })
                     }
