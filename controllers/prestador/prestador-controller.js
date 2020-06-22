@@ -147,24 +147,80 @@ exports.CadQuartPrest = (req, res, next) => {
 /*                                ---------------                       */
 
 
+
+
 /*                        CINCO CADASTRO  PRESTADOR                  */
-exports.CadCincoPrest = (req, res, next) => {       
-    mysql.getConnection((error, conn) =>{
-        if(error){return res.json({ error:'error sql'})}
+exports.CadCincoPrest = (req, res, next) => {      
+    /*                                CADASTRO DA IMAGEM                       */   
+    uploadImage.upload(req, res, function (err) {
 
-        conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
-        (error, resulta, field)=> { 
-            conn.release();
-            if(error){return res.json({ error:'error sql'})}  
-            var id = resulta.insertId; 
+    // if(req.file){
+        console.log( req.fileFiltImgResp)
+        if (err instanceof multer.MulterError) {
+            if(err.message == 'File too large'){
+                err.message = 'Arquivo maior que 5MB'
+            }
+            return res.json({err:'error multer', message: err.message})
+        
+        } else if (err) {
+            return res.json({err: err, message:'error ao enviar imagem'})
+        } else if (req.fileFiltImgResp === 'fail'){
+            //resp += ' '+ req.fileFiltImgResp
+            return res.json({ message: req.respError, msg:'error up img' })
+        } else if(req.fileFiltImgResp === 'ok') {
+            console.log(req.file.path)
+            req.imagem = req.file.path
+            // funcSql()
 
-            conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,req.body.LogoPrest,req.body.OngPrest,req.prestadores.EmailPrest],
-            (error, results, field)=> { 
-                if(error){return res.json({ error:error})}            
-                return res.json({ message: "Alterado"})
-            })       
-        })
-    })
+            mysql.getConnection((error, conn) =>{
+                if(error){return res.json({ error:'error sql'})}
+        
+                conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
+                (error, resulta, field)=> { 
+                    conn.release();
+                    if(error){return res.json({ error:'error sql'})}  
+                    var id = resulta.insertId; 
+        
+                    conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,req.imagem,req.body.OngPrest,req.prestadores.EmailPrest],
+                    (error, results, field)=> { 
+                        if(error){return res.json({ error:error})}            
+                        return res.json({ message: "Alterado"})
+                    })       
+                })
+            })
+
+            // //Provavel por aqui o middleware do sharp e colocar o funcsql() apos essa func do sharp
+            // compressImg.compressImage(req.file)
+            // .then(newPath => {
+            //     console.log("Upload e compressão realizados com sucesso! O novo caminho é:" +newPath );
+            //     req.imagem = newPath;
+            //     //funcSql();
+            //     CadCincoPrest();
+            // })
+            // .catch(err => {
+            //     return res.json({ err: err, msg:'error server resize' })
+            // });
+
+        } else {
+            return res.json({ err: err, msg:'tipo errado' })
+        } 
+    });  
+//     mysql.getConnection((error, conn) =>{
+//         if(error){return res.json({ error:'error sql'})}
+
+//         conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
+//         (error, resulta, field)=> { 
+//             conn.release();
+//             if(error){return res.json({ error:'error sql'})}  
+//             var id = resulta.insertId; 
+
+//             conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,req.imagem,req.body.OngPrest,req.prestadores.EmailPrest],
+//             (error, results, field)=> { 
+//                 if(error){return res.json({ error:error})}            
+//                 return res.json({ message: "Alterado"})
+//             })       
+//         })
+//     })
 }
 /*                                ---------------                       */
 
@@ -177,7 +233,12 @@ exports.CadSeisPrest = (req, res, next) => {
         conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp,VetResp,CRMVResp,DataEmiResp)values(?,?,?,?,?,?,?,?)',[req.prestadores.id,req.body.NomeResp,req.body.CpfResp,req.body.CelResp,req.body.VetResp,req.body.CRMVResp,req.body.DataEmiResp],
         (error, resulta, field)=> { 
             conn.release();
-            if(error){return res.json({ error:'error sql'})}  
+            if(error){return res.json({ error:'error sql'})} 
+            if(result.length >= 1){
+                if(result[0].CpfResp == req.body.CpfResp){
+                    return res.json({ message: "Ja existe CPF"})
+                }         
+            } 
 
             var id = resulta.insertId;  
             conn.query('update prestadores set IdResp=? where EmailPrest= ?', [id,req.prestadores.EmailPrest],
@@ -234,7 +295,7 @@ exports.CadSetePrest = (req,res,next) => {
                             bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
                                 if(errBcrypt){ return res.json({ error: 'error sql' }) }
                                 conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                    [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc],
+                                    [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"1111","Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc],
                                     (error, resultado, field)=> { 
                                         if(error){return res.json({ error:'error sql'})}  
 
