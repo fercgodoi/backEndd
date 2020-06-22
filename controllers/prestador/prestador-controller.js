@@ -2,6 +2,7 @@ const mysql = require('../../mysql').pool;
 const nodemailer = require("nodemailer");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const uploadImage = require('../../middleware/imgPrest');
 
 /*                                                    ENVIAR EMAIL                                                               */
 let transporter = nodemailer.createTransport({
@@ -107,7 +108,7 @@ exports.CadSegPrest = (req, res, next) => {
 exports.CadTercPrest = (req, res, next) => {       
     mysql.getConnection((error, conn) =>{
         if(error){return res.json({ error:'error sql'})}
-        conn.query('insert into horarioPrest (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
+        conn.query('insert into horarioPrest  (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
             (error, resultHorario, field)=> {
             if(error){ return res.json({ error: "error sql"}) }  
 
@@ -116,7 +117,7 @@ exports.CadTercPrest = (req, res, next) => {
             conn.query('update prestadores set NomeFantsPrest=?,PetShopPrest=?,ClinicaPrest=?,PasseadorPrest=?,HotelPrest=?,CepPrest=?,descricaoPrest=?, NumPrest=?,IdHorarioPrest=?,longitude=?,latitude=? where EmailPrest= ?', [req.body.NomeFantsPrest,req.body.PetShopPrest,req.body.ClinicaPrest,req.body.PasseadorPrest,req.body.HotelPrest,req.body.CepPrest,req.body.descricaoPrest,req.body.NumPrest,idHorarios,req.body.longitude,req.body.latitude,req.prestadores.EmailPrest],
             (error, resulta, field)=> {
                 conn.release(); 
-                if(error){return res.json({ error:error})}            
+                if(error){return res.json({ error:"error sql"})}            
                 return res.json({ message: "Alterado"})
             })
         })
