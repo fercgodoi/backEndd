@@ -18,9 +18,9 @@ const rotaTeste = require('./routes/teste/teste')
 
 app.use(cors());                                        //libera o acesso para determinados dominios
 app.use(morgan('dev'));                                 //da uma informação no console sobre a requisição(callback)//s
-app.use('/uploads/imgPrest', express.static('uploads/imgPrest'));         //diretorio uploads esta disponivel publicamente
-app.use(bodyParser.urlencoded({extended: false}));      //Aceitar apenas dados simples//
-app.use(bodyParser.json());                             //so iremos aceita formato json//
+app.use('/uploads/imgPrest', express.static('uploads/imgPrest'));       //diretorio uploads esta disponivel publicamente 
+app.use(bodyParser.urlencoded({limit: '50mb', extended: true, parameterLimit: 50000 }));      //Aceitar apenas dados simples//
+app.use(bodyParser.json( {limit: '50mb'}));                             //so iremos aceita formato json//
 
 app.use((req, res, next) => {                           //implemetando o cors//
     res.header('Access-Control-Allow-Origin', '*')      //permissao de controle de acesso para todos* (poderia passar algum http) //
