@@ -116,7 +116,7 @@ exports.CadTercPrest = (req, res, next) => {
             conn.query('update prestadores set NomeFantsPrest=?,PetShopPrest=?,ClinicaPrest=?,PasseadorPrest=?,HotelPrest=?,CepPrest=?,descricaoPrest=?, NumPrest=?,IdHorarioPrest=?,longitude=?,latitude=? where EmailPrest= ?', [req.body.NomeFantsPrest,req.body.PetShopPrest,req.body.ClinicaPrest,req.body.PasseadorPrest,req.body.HotelPrest,req.body.CepPrest,req.body.descricaoPrest,req.body.NumPrest,idHorarios,req.body.longitude,req.body.latitude,req.prestadores.EmailPrest],
             (error, resulta, field)=> {
                 conn.release(); 
-                if(error){return res.json({ error:'error sql'})}            
+                if(error){return res.json({ error:error})}            
                 return res.json({ message: "Alterado"})
             })
         })
