@@ -173,22 +173,24 @@ exports.CadCincoPrest = (req, res, next) => {
             req.imagem = req.file.path
             // funcSql()
 
-            mysql.getConnection((error, conn) =>{
-                if(error){return res.json({ error:'error sql'})}
+            return res.json({ message: req.respError, msg:'req.file.path' })
+
+            // mysql.getConnection((error, conn) =>{
+            //     if(error){return res.json({ error:'error sql'})}
         
-                conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
-                (error, resulta, field)=> { 
-                    conn.release();
-                    if(error){return res.json({ error:'error sql'})}  
-                    var id = resulta.insertId; 
+            //     conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
+            //     (error, resulta, field)=> { 
+            //         conn.release();
+            //         if(error){return res.json({ error:'error sql'})}  
+            //         var id = resulta.insertId; 
         
-                    conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,req.imagem,req.body.OngPrest,req.prestadores.EmailPrest],
-                    (error, results, field)=> { 
-                        if(error){return res.json({ error:error})}            
-                        return res.json({ message: "Alterado"})
-                    })       
-                })
-            })
+            //         conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,req.imagem,req.body.OngPrest,req.prestadores.EmailPrest],
+            //         (error, results, field)=> { 
+            //             if(error){return res.json({ error:error})}            
+            //             return res.json({ message: "Alterado"})
+            //         })       
+            //     })
+            // })
 
             // //Provavel por aqui o middleware do sharp e colocar o funcsql() apos essa func do sharp
             // compressImg.compressImage(req.file)
