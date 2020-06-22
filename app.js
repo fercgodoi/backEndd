@@ -35,8 +35,6 @@ app.use((req, res, next) => {                           //implemetando o cors//
 
 
 
-
-
 app.use('/Agendamento', RotaAgendamento);       //deixando o diretorio uploads disponivel publicamente, p poder ser visualizado no navegador//
 app.use('/Funcionario', rotaFuncionario); 
 app.use('/Prestador', rotaPrestador); 
