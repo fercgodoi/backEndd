@@ -121,8 +121,6 @@ exports.LoginFunc = (req, res, next) => {
                 } 
                 return res.json({ error: 'falha na autenticação'})
             })   
-
-            conn.release();
             } 
         )     
     })
