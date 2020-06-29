@@ -28,6 +28,7 @@ exports.LoginFunc = (req, res, next) => {
 
         conn.query('select * from funcionario where EmailFunc= ?',[req.body.EmailFunc],
             (error, result, fields) => {
+                conn.release();
                 if(error){ return res.json({ error: "error sql"}) } 
                 if(result.length < 1){
                     return res.json({message: "Usuario inexistente"})
@@ -67,23 +68,24 @@ exports.LoginFunc = (req, res, next) => {
                         if(timeSist > timeFuncTot){     
                             let passRandom = getRandomInt();
 
-                            conn.query('update funcionario set CodFunc= ?, TimeFunc = ? where idFunc = ? ',[passRandom, timeSist, response.Funcionarios[0].idFunc],
-                                (error, result, fields) => {
-                                    if(error){ return res.json({ error: "error sql"}) } 
+                            mysql.getConnection((error, conn) => {
+                                conn.query('update funcionario set CodFunc= ?, TimeFunc = ? where idFunc = ? ',[passRandom, timeSist, response.Funcionarios[0].idFunc],
+                                    (error, result, fields) => {
+                                        conn.release();
+                                        if(error){ return res.json({ error: "error sql"}) } 
 
-                                     transporter.sendMail({
-                                        from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
-                                        to: req.body.EmailFunc,              
-                                        subject: "Codigo de verificação",
-                                        text: `Faça login novamente no site com esta código: ${passRandom}`
-                                    }).then(message => {
-                                        return res.json({ message: 'Seu codigo expirou, enviamos um novo codigo para seu email'})
-                                    }).catch(err =>{
-                                        return res.json({ message: "nao deu", error : err})
-                                    }) 
-
-                                }
-                            ) 
+                                        transporter.sendMail({
+                                            from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
+                                            to: req.body.EmailFunc,              
+                                            subject: "Codigo de verificação",
+                                            text: `Faça login novamente no site com esta código: ${passRandom}`
+                                        }).then(message => {
+                                            return res.json({ message: 'Seu codigo expirou, enviamos um novo codigo para seu email'})
+                                        }).catch(err =>{
+                                            return res.json({ message: "nao deu", error : err})
+                                        }) 
+                                })
+                            }) 
                         }else{                        
                                 return res.json({
                                     response: response.Funcionarios[0].idFunc,
@@ -138,6 +140,7 @@ exports.CadastroFuncionario = (req, res, next) => {
 
         conn.query('select * from funcionario where EmailFunc = ? or CpfFunc = ?', [req.body.EmailFunc,req.body.CpfFunc],
         (error, result, field)=> {
+            conn.release();
             if(error){ return res.json({ error: "error sql"}) } 
 
             if(result.length >= 1){
@@ -149,33 +152,67 @@ exports.CadastroFuncionario = (req, res, next) => {
                 } 
                           
             }
-            conn.release();
-
+            
+            mysql.getConnection((error, conn) => {
             conn.query('insert into horarioFunc (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
             (error, resultHorario, field)=> {
+                conn.release();
                 if(error){ return res.json({ error: "error sql"}) } 
                 
                 let idHorarios = resultHorario.insertId; 
                     if(req.body.CRMVFunc != "" && req.body.CRMVFunc != null && req.body.CRMVFunc != undefined)
                     {
-                        conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
-                        (error, result, field)=> {
+                        mysql.getConnection((error, conn) => {
+                            conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
+                            (error, result, field)=> {
+                                conn.release();
+                                if(error){ return res.json({ error: "error sql"}) } 
+                                if(result.length >= 1){
+                                    if(result[0].CRMVFunc == req.body.CRMVFunc){
+                                        return res.json({ message: "Ja existe CRMV"})
+                                    }           
+                                }                       
 
-                            if(error){ return res.json({ error: "error sql"}) } 
-                            if(result.length >= 1){
-                                if(result[0].CRMVFunc == req.body.CRMVFunc){
-                                    return res.json({ message: "Ja existe CRMV"})
-                                }           
-                            }                       
+                                let passRandom = getRandomInt();
+                                let timeCodFunc = Date.now();
+                                let senha = "123456";
+                                bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
+                                    if(errBcrypt){ return res.json({ error: 'error' }) }
+                                    mysql.getConnection((error, conn) => {
+                                        conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                        [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc],
+                                        (error, resultado, field)=> { 
+                                            conn.release();
+                                            if(error){ return res.json({ error: "error sql"}) } 
 
-                            let passRandom = getRandomInt();
-                            let timeCodFunc = Date.now();
-                            let senha = "123456";
-                            bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
-                                if(errBcrypt){ return res.json({ error: 'error' }) }
-                                conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                    [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc],
-                                    (error, resultado, field)=> { 
+                                            transporter.sendMail({
+                                                from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
+                                                to: req.body.EmailFunc,              
+                                                subject: "Senha AgendaAnimal",
+                                                text: `Faça login novamente no site com esta senha: ${senha} e seu código é: ${passRandom}`
+                                            }).then(message => {
+                                                return res.json({ message: 'Cadastrado'})
+                                            }).catch(err =>{
+                                                return res.json({ message: "nao deu", error : err})
+                                            })                                    
+                                        })
+                                    })                                
+                                }) 
+                                
+                            })
+                        })
+                    }
+                    else{
+                        let passRandom = getRandomInt();
+                        let timeCodFunc = Date.now();
+                        let senha = "123456";
+                        bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
+                            if(errBcrypt){ return res.json({ error: 'error bcrypt' }) }
+                            mysql.getConnection((error, conn) => {
+                                conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                    [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom],
+                                    (error, resultado, field)=> {
+                                        conn.release();
                                         if(error){ return res.json({ error: "error sql"}) } 
 
                                         transporter.sendMail({
@@ -187,40 +224,13 @@ exports.CadastroFuncionario = (req, res, next) => {
                                             return res.json({ message: 'Cadastrado'})
                                         }).catch(err =>{
                                             return res.json({ message: "nao deu", error : err})
-                                        })                                    
-                                    }
-                                )                                
-                            }) 
-                            
-                        })
-                    }
-                    else{
-                        let passRandom = getRandomInt();
-                        let timeCodFunc = Date.now();
-                        let senha = "123456";
-                        bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
-                            if(errBcrypt){ return res.json({ error: 'error bcrypt' }) }
-                            conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom],
-                                (error, resultado, field)=> {
-                                    if(error){ return res.json({ error: "error sql"}) } 
-
-                                    transporter.sendMail({
-                                        from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
-                                        to: req.body.EmailFunc,              
-                                        subject: "Senha AgendaAnimal",
-                                        text: `Faça login novamente no site com esta senha: ${senha} e seu código é: ${passRandom}`
-                                    }).then(message => {
-                                        return res.json({ message: 'Cadastrado'})
-                                    }).catch(err =>{
-                                        return res.json({ message: "nao deu", error : err})
-                                    })                                     
-                                }
-                            )
+                                        })                                     
+                                    })
+                                })
                             // conn.release();
                         })          
                     }
-                                                         
+            })                                         
             })        
          })
     
@@ -238,20 +248,20 @@ exports.CodFunc = (req, res, next) => {       //rota passando parametro
 
         conn.query('select * from funcionario where CpfFunc = ?',[ req.body.CpfFunc , req.body.CodFunc],
             (error, result, fields) => {
+                conn.release();
                 if(error){ return res.json({ error: "error sql"}) } 
-
                 if(result.length == 0){
                     return  res.json({ message: "Código incorreto"})
                 } 
 
+                mysql.getConnection((error, conn) => {
                 conn.query('update funcionario set StatusFunc = ? where CpfFunc = ? ',['Confirmado', req.body.CpfFunc],
                     (error, resultado, fields) => {
-                        if(error){ return res.json({ error: "error sql"}) } 
-
                         conn.release();
+                        if(error){ return res.json({ error: "error sql"}) } 
                         return  res.json({message: "Código confirmado"}) 
-                    }
-                )
+                    })
+                })
             }
         )     
     })
@@ -267,19 +277,21 @@ exports.EsqueciSenhaFunc = (req, res, next) => {
 
         conn.query('select * from funcionario where EmailFunc = ?', [req.body.EmailFunc],
             (error, result, field)=> {
-                if(error){ return res.json({ message: "error sql"}) } 
+                conn.release();
 
+                if(error){ return res.json({ message: "error sql"}) } 
                 if(result.length == 0){
                     return res.json({ message: "Usuario nao encontrado"})
                 }
 
-                conn.release();
+               
                 let passRandom = String(getRandomInt()) ;
                 bcrypt.hash(passRandom, 10, (err, hash) =>{
                     if(err){ return res.json({ message: "erro no bcrypt" }) } 
-                
-                    conn.query(`update funcionario set SenhaFunc = ?, StatusFunc = ? where EmailFunc = ? `, [hash, 'Pendente', req.body.EmailFunc],
-                        (error, resultado, field)=> {              
+                    mysql.getConnection((error, conn) =>{
+                        conn.query(`update funcionario set SenhaFunc = ?, StatusFunc = ? where EmailFunc = ? `, [hash, 'Pendente', req.body.EmailFunc],
+                        (error, resultado, field)=> {   
+                            conn.release();           
                             if(error){ return res.json({ message: "error sql"}) } 
 
                             transporter.sendMail({
@@ -291,8 +303,8 @@ exports.EsqueciSenhaFunc = (req, res, next) => {
                                 res.json({message:'Enviamos uma nova senha, verifique seu email' , mensagem: message})
                             }).catch(err =>{
                                 res.json({ message: "nao deu"})
-                            }) 
-                            
+                            })
+                        }) 
                     })
                 })              
             })
@@ -308,20 +320,23 @@ exports.TrocarSenhaFunc = (req, res, next) => {
 
         conn.query('select * from funcionario where EmailFunc = ?', [req.body.EmailFunc],
             (error, result, field)=> {
+                conn.release();
                if(error){ return res.json({ message: "error sql"}) }                
                 if(result.length == 0){
                     return res.json({ message: "Usuario nao encontrado"})
                 }
                 bcrypt.hash(req.body.SenhaFunc, 10, (err, hash) =>{
                     if(err){ return res.json({ message: "erro no bcrypt"}) }     
-
-                    conn.query(`update funcionario set SenhaFunc = ?, StatusFunc = ? where EmailFunc = ? `, [hash, 'Confirmado', req.body.EmailFunc],
-                        (error, resultado, field)=> {                 
-                            if(error){ return res.json({ message: "error sql"}) } 
-                            return res.json({  message: "deu certo"})       
+                    mysql.getConnection((error, conn) =>{
+                        conn.query(`update funcionario set SenhaFunc = ?, StatusFunc = ? where EmailFunc = ? `, [hash, 'Confirmado', req.body.EmailFunc],
+                            (error, resultado, field)=> {        
+                                conn.release();         
+                                if(error){ return res.json({ message: "error sql"}) } 
+                                return res.json({  message: "deu certo"})       
+                        })
                     })
                 })
-                conn.release();
+                
             })
     }) 
 }
@@ -395,14 +410,17 @@ exports.AtualizarFunc = (req, res, next) => {
 
         conn.query('select * from funcionario where EmailFunc = ?', [req.body.EmailFunc],
             (error, result, field)=> {
+                conn.release();
                 if(error){return res.json({ error:'error sql'})}
                 if(result.length >= 1){
                     if(result[0].idFunc != req.body.idFunc){
                         return res.json({ message: "Ja existe Email"})
                     }                 
-                }                
+                }        
+                mysql.getConnection((error, conn) =>{        
                 conn.query('select * from funcionario where CpfFunc = ?', [req.body.CpfFunc],
                     (error, result, field)=> {
+                        conn.release();
                         if(error){return res.json({ error:'error sql'})}
                         if(result.length >= 1){
                             if(result[0].idFunc != req.body.idFunc){
@@ -411,55 +429,75 @@ exports.AtualizarFunc = (req, res, next) => {
                         }
                         
                         if(req.body.CRMVFunc != "" || req.body.CRMVFunc != null || req.body.CRMVFunc != undefined){
-                            conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
+                            mysql.getConnection((error, conn) =>{
+                                conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
                                 (error, resultados, field)=> {
+                                    conn.release();
                                     if(error){return res.json({ error:"error sql"})}
                                     if(resultados.length >= 1){                            
                                         if(resultados[0].idFunc != req.body.idFunc){
                                             return res.json({ message: "Ja existe CRMV"})
                                         }           
                                     }
-                                    conn.query(`update funcionario set NomeFunc = ?,EmailFunc=?,CpfFunc= ?,RecepFunc=?,VetFunc= ?,AdminFunc= ?,FinanFunc= ?,AcessoFunc= ?, CelFunc= ?, CRMVFunc = ?,DateEmiFunc=?  where idFunc = ? `, [req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc, req.body.CelFunc,req.body.CRMVFunc, req.body.DateEmiFunc,req.body.idFunc],
-                                    (error, resultado, field)=> {                 
-                                        if(error){                
-                                            return res.json({ error:"error sql"})         
-                                        }
+                                    mysql.getConnection((error, conn) =>{
+                                        conn.query(`update funcionario set NomeFunc = ?,EmailFunc=?,CpfFunc= ?,RecepFunc=?,VetFunc= ?,AdminFunc= ?,FinanFunc= ?,AcessoFunc= ?, CelFunc= ?, CRMVFunc = ?,DateEmiFunc=?  where idFunc = ? `, [req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc, req.body.CelFunc,req.body.CRMVFunc, req.body.DateEmiFunc,req.body.idFunc],
+                                        (error, resultado, field)=> {     
+                                            conn.release();            
+                                            if(error){                
+                                                return res.json({ error:"error sql"})         
+                                            }
+                                            mysql.getConnection((error, conn) =>{
+                                                conn.query('select idHorarioFunc from funcionario where idFunc= ?', [req.body.idFunc],
+                                                (error, resultadoPesq, field)=> {  
+                                                    console.release();               
+                                                    if(error){                
+                                                        return res.json({ error:"error sql"})         
+                                                    }
+                                                    let horario = resultadoPesq[0].idHorarioFunc;
+                                                    mysql.getConnection((error, conn) =>{
+                                                        conn.query('update horarioFunc set SegundInicio=?, SegundFinal=?, TercaInicio=?, TercaFinal=?, QuartInicio=?, QuartFinal=?, QuintInicio=?, QuintFinal=?, SextInicio=?, SextFinal=?,SabInicio=?, SabFinal=?, DomingInicio=?, DomingFinal=? where idHorarioFunc =?', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal,horario],
+                                                        (error, resultHorario, field)=> {
+                                                            conn.release();
+                                                            if(error){ return res.json({ error: "error sql"}) } 
+                                                            return res.json({ message: "Atualizado"})   
+                                                        })
+                                                    })
+                                                })
+                                            })
+                                        }) 
+                                    })
+                                })
+                            })
+                        }else{
+                            mysql.getConnection((error, conn) =>{
+                                conn.query(`update funcionario set NomeFunc = ?,EmailFunc=?,CpfFunc= ?,RecepFunc=?,VetFunc= ?,AdminFunc= ?,FinanFunc= ?,AcessoFunc= ?, CelFunc= ? where idFunc = ? `, [req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc, req.body.CelFunc,req.body.idFunc],
+                                (error, resultado, field)=> {    
+                                    conn.release();             
+                                    if(error){                
+                                        return res.json({ error:"error sql"})         
+                                    }
+                                    mysql.getConnection((error, conn) =>{
                                         conn.query('select idHorarioFunc from funcionario where idFunc= ?', [req.body.idFunc],
-                                        (error, resultadoPesq, field)=> {                 
+                                        (error, resultadoPesq, field)=> { 
+                                            conn.release();                
                                             if(error){                
                                                 return res.json({ error:"error sql"})         
                                             }
                                             let horario = resultadoPesq[0].idHorarioFunc;
-                                            conn.query('update horarioFunc set SegundInicio=?, SegundFinal=?, TercaInicio=?, TercaFinal=?, QuartInicio=?, QuartFinal=?, QuintInicio=?, QuintFinal=?, SextInicio=?, SextFinal=?,SabInicio=?, SabFinal=?, DomingInicio=?, DomingFinal=? where idHorarioFunc =?', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal,horario],
-                                            (error, resultHorario, field)=> {
-                                                if(error){ return res.json({ error: "error sql"}) } 
-                                                return res.json({ message: "Atualizado"})   
+                                            mysql.getConnection((error, conn) =>{
+                                                conn.query('update horarioFunc set SegundInicio=?, SegundFinal=?, TercaInicio=?, TercaFinal=?, QuartInicio=?, QuartFinal=?, QuintInicio=?, QuintFinal=?, SextInicio=?, SextFinal=?,SabInicio=?, SabFinal=?, DomingInicio=?, DomingFinal=? where idHorarioFunc =?', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal,horario],
+                                                (error, resultHorario, field)=> {
+                                                    conn.release();
+                                                    if(error){ return res.json({ error: "error sql"}) } 
+                                                    return res.json({ message: "Atualizado"})
+                                                })
                                             })
-                                        })
-                                    })               
-                                    conn.release();
+                                        })   
+                                    })                                 
                                 })
-                        }else{
-                            conn.query(`update funcionario set NomeFunc = ?,EmailFunc=?,CpfFunc= ?,RecepFunc=?,VetFunc= ?,AdminFunc= ?,FinanFunc= ?,AcessoFunc= ?, CelFunc= ? where idFunc = ? `, [req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc, req.body.CelFunc,req.body.idFunc],
-                            (error, resultado, field)=> {                 
-                                if(error){                
-                                    return res.json({ error:"error sql"})         
-                                }
-                                conn.query('select idHorarioFunc from funcionario where idFunc= ?', [req.body.idFunc],
-                                (error, resultadoPesq, field)=> {                 
-                                    if(error){                
-                                        return res.json({ error:"error sql"})         
-                                    }
-                                    let horario = resultadoPesq[0].idHorarioFunc;
-                                    conn.query('update horarioFunc set SegundInicio=?, SegundFinal=?, TercaInicio=?, TercaFinal=?, QuartInicio=?, QuartFinal=?, QuintInicio=?, QuintFinal=?, SextInicio=?, SextFinal=?,SabInicio=?, SabFinal=?, DomingInicio=?, DomingFinal=? where idHorarioFunc =?', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal,horario],
-                                    (error, resultHorario, field)=> {
-                                        if(error){ return res.json({ error: "error sql"}) } 
-                                        return res.json({ message: "Atualizado"})
-                                    })
-                                })                                    
-                            })               
-                            conn.release();
+                            })
                         }
+                    })
                 }) 
                 
             })

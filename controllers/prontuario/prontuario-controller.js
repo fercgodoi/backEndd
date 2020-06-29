@@ -14,13 +14,14 @@ exports.CadProntuario = (req, res, next) => {
             if(resultado.length == 0){
                 return res.json({ message: "Pet nao encontrado"})
             }
-
-            conn.query('insert into consulta(idPrest,idFunc,idPet,idVacina,idMed,idExames,dataConst) values (?,?,?,?,?,?,?)',
-            [req.funcionario.idPrest,req.funcionario.idFunc,resultado[0].idPet,req.body.idVacina,req.body.idMed,req.body.idExames,req.body.dataConst],
-                (error, resultados, field)=> {
-                
-                if(error){ return res.json({ error:"error sql"})};
-                return res.json({message : "Cadastrado"});
+            mysql.getConnection((error, conn) => {
+                conn.query('insert into consulta(idPrest,idFunc,idPet,idVacina,idMed,idExames,dataConst) values (?,?,?,?,?,?,?)',
+                [req.funcionario.idPrest,req.funcionario.idFunc,resultado[0].idPet,req.body.idVacina,req.body.idMed,req.body.idExames,req.body.dataConst],
+                    (error, resultados, field)=> {
+                        conn.release();
+                    if(error){ return res.json({ error:"error sql"})};
+                    return res.json({message : "Cadastrado"});
+                })
             })
 
         })

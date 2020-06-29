@@ -13,21 +13,26 @@ exports.CadastroMed = (req, res, next) => {
                 return res.json({ message: "Vet nao encontrado"})
             }
 
-            conn.query('select * from pet where rgPet = ?', [req.body.rgPet],
-            (error, resultado, field)=> {
-                if(error){return res.json({ error:'erro sql'})}
-                if(resultado.length == 0){
-                    return res.json({ message: "Pet nao encontrado"})
-                }
+            mysql.getConnection((error, conn) => {
+                conn.query('select * from pet where rgPet = ?', [req.body.rgPet],
+                (error, resultado, field)=> {
+                    conn.release();
+                    if(error){return res.json({ error:'erro sql'})}
+                    if(resultado.length == 0){
+                        return res.json({ message: "Pet nao encontrado"})
+                    }
+                    mysql.getConnection((error, conn) => {
+                        conn.query('insert into medicamento(idPet,idPrest,statusMed,doseMed,rotinaMed,dataIniMed,dataFinMed,nomeMed,nomeEstbMed,emailEstbMed,loteMed,observacaoMed,confirmMed) values (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                        [resultado[0].idPet,req.funcionario.idPrest, req.body.statusMed, req.body.doseMed, req.body.rotinaMed, req.body.dataIniMed,req.body.dataFinMed, req.body.nomeMed,result[0].NomeFantsPrest, result[0].EmailPrest,  req.body.loteMed, req.body.observacaoMed,"Confirmado"],
+                            (error, resultados, field)=> {
+                            conn.release();
+                            if(error){return res.json({ error: 'erro sql'})} 
+                            return res.json({message : "Cadastrado", id :resultados.insertId});
+                        })
+                    })
 
-                conn.query('insert into medicamento(idPet,idPrest,statusMed,doseMed,rotinaMed,dataIniMed,dataFinMed,nomeMed,nomeEstbMed,emailEstbMed,loteMed,observacaoMed,confirmMed) values (?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                [resultado[0].idPet,req.funcionario.idPrest, req.body.statusMed, req.body.doseMed, req.body.rotinaMed, req.body.dataIniMed,req.body.dataFinMed, req.body.nomeMed,result[0].NomeFantsPrest, result[0].EmailPrest,  req.body.loteMed, req.body.observacaoMed,"Confirmado"],
-                    (error, resultados, field)=> {
-                    if(error){return res.json({ error: 'erro sql'})} 
-                    return res.json({message : "Cadastrado", id :resultados.insertId});
-                })
-
-            })   
+                }) 
+            })  
         }) 
     })
 }

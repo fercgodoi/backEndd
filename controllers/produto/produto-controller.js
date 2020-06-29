@@ -118,16 +118,16 @@ exports.CadastrarProdutos = (req, res, next) => {
                 if(result.length >= 1) {
                     return res.json({ message :'Já existe'})
                 }
-               
-            conn.query('insert into produto(idPrest,NomeProd,DescProd,PrecoProd,QuantProd,ImgProd,ImgsProd) values(?,?,?,?,?,?,?)',
-                [req.funcionario.idPrest, req.body.NomeProd, req.body.DescProd, req.body.PrecoProd, req.body.QuantProd,req.body.ImgProd,req.body.ImgsProd],
-                (error, resultado, field)=> {
-                    if(error){ return res.json({ error: "error sql"}) } 
-                    return res.json({message: 'Cadastrado'})
-                }            
-            )
-        }
-        )
+                mysql.getConnection((error, conn) => {
+                conn.query('insert into produto(idPrest,NomeProd,DescProd,PrecoProd,QuantProd,ImgProd,ImgsProd) values(?,?,?,?,?,?,?)',
+                    [req.funcionario.idPrest, req.body.NomeProd, req.body.DescProd, req.body.PrecoProd, req.body.QuantProd,req.body.ImgProd,req.body.ImgsProd],
+                    (error, resultado, field)=> {
+                        conn.release();
+                        if(error){ return res.json({ error: "error sql"}) } 
+                        return res.json({message: 'Cadastrado'})
+                    })
+                })
+        })
     })  
 }
 /*                                                    ---------------                                                              */
@@ -148,12 +148,14 @@ exports.EditarProd = (req, res, next) => {       //rota passando parametro
                         return res.json({ message :'Já existe'})
                     }
                 }
-
-                conn.query('update produto set NomeProd=?, DescProd= ?,PrecoProd= ?, QuantProd= ?, ImgProd=?, ImgsProd=? where idProd=?',
-                [req.body.NomeProd, req.body.DescProd, req.body.PrecoProd, req.body.QuantProd,req.body.ImgProd,req.body.ImgsProd,req.body.idProd],
-                (error, resultado, field)=> {
-                    if(error){ return res.json({ error: "error sql"}) } 
-                    return res.json({message: 'Alterado'})
+                mysql.getConnection((error, conn) => {
+                    conn.query('update produto set NomeProd=?, DescProd= ?,PrecoProd= ?, QuantProd= ?, ImgProd=?, ImgsProd=? where idProd=?',
+                    [req.body.NomeProd, req.body.DescProd, req.body.PrecoProd, req.body.QuantProd,req.body.ImgProd,req.body.ImgsProd,req.body.idProd],
+                    (error, resultado, field)=> {
+                        conn.release();
+                        if(error){ return res.json({ error: "error sql"}) } 
+                        return res.json({message: 'Alterado'})
+                    })
                 })
         })
     })  

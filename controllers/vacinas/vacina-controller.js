@@ -6,21 +6,21 @@ exports.inserirVacina = (req, res, next) => {
 
         conn.query('select * from pet where rgPet = ?', [req.body.rgPet],
             (error, resultado, field)=> {
+                conn.release();
                 if(error){return res.json({ error: "error sql"})}    
                 if(resultado.length == 0){
                     return res.json({ message: "Pet nao encontrado"})
                 }
-
-                conn.query('insert into vacina(dataApliVacina, dataProxVacina, nomeVacina, qntDoseVacina, loteVacina, valorVacina, nomeVetVacina, emailVetVacina, crmvVetVacina, idPet,idPrest,idFunc,observacaoVacina,statusVacina,confirmaVacina)  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)',
-                    [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.loteVacina, req.body.valorVacina, req.funcionario.NomeFunc, req.funcionario.EmailFunc, req.funcionario.CRMVFunc, resultado[0].idPet,req.funcionario.idPrest,req.funcionario.idFunc,req.body.observacaoVacina,"Vigente",1],
-                    (error, resultados, field)=> {
-                        conn.release();
-                        if(error){return res.json({ error: "error sql"})}                            
-                        return res.json({message : "Cadastrado", id :resultados.insertId});                        
-                    }
-                )
-            }
-        )
+                mysql.getConnection((error, conn) => {
+                    conn.query('insert into vacina(dataApliVacina, dataProxVacina, nomeVacina, qntDoseVacina, loteVacina, valorVacina, nomeVetVacina, emailVetVacina, crmvVetVacina, idPet,idPrest,idFunc,observacaoVacina,statusVacina,confirmaVacina)  values (?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?,?,?,?,?)',
+                        [req.body.dataApliVacina, req.body.dataProxVacina, req.body.nomeVacina, req.body.qntDoseVacina, req.body.loteVacina, req.body.valorVacina, req.funcionario.NomeFunc, req.funcionario.EmailFunc, req.funcionario.CRMVFunc, resultado[0].idPet,req.funcionario.idPrest,req.funcionario.idFunc,req.body.observacaoVacina,"Vigente",1],
+                        (error, resultados, field)=> {
+                            conn.release();
+                            if(error){return res.json({ error: "error sql"})}                            
+                            return res.json({message : "Cadastrado", id :resultados.insertId});                        
+                    })
+                })
+            })
     }) 
 }
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
