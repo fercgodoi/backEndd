@@ -121,8 +121,6 @@ exports.LoginFunc = (req, res, next) => {
                 } 
                 return res.json({ error: 'falha na autenticação'})
             })   
-
-            conn.release();
             } 
         )     
     })
@@ -179,8 +177,8 @@ exports.CadastroFuncionario = (req, res, next) => {
                                 bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
                                     if(errBcrypt){ return res.json({ error: 'error' }) }
                                     mysql.getConnection((error, conn) => {
-                                        conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                        [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc],
+                                        conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc,TipoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                        [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc,"Funcionário"],
                                         (error, resultado, field)=> { 
                                             conn.release();
                                             if(error){ return res.json({ error: "error sql"}) } 
@@ -209,8 +207,8 @@ exports.CadastroFuncionario = (req, res, next) => {
                         bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
                             if(errBcrypt){ return res.json({ error: 'error bcrypt' }) }
                             mysql.getConnection((error, conn) => {
-                                conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                    [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom],
+                                conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,TipoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                    [req.funcionario.idPrest,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom,"Funcionário"],
                                     (error, resultado, field)=> {
                                         conn.release();
                                         if(error){ return res.json({ error: "error sql"}) } 
@@ -365,6 +363,7 @@ exports.BuscarFunc = (req, res, next) => {
                             StatusFunc:func.StatusFunc,
                             HorarioFunc:func.HorarioFunc,
                             CelFunc:func.CelFunc,
+                            TipoFunc:func.TipoFunc
                         };
                     })
                 };

@@ -100,7 +100,7 @@ exports.CadSegPrest = (req, res, next) => {
             return res.json({ message: 'Codigo incorreto'})  
         }
 
-        conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Confirmado",req.prestadores.EmailPrest],
+        conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Incompleto",req.prestadores.EmailPrest],
         (error, resulta, field)=> { 
             conn.release();
             if(error){return res.json({ error:'error sql'})}            
@@ -322,8 +322,8 @@ exports.CadSetePrest = (req,res,next) => {
                                     bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
                                         if(errBcrypt){ return res.json({ error: 'error sql' }) }
                                         mysql.getConnection((error, conn) => {
-                                            conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                                [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"1111","Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc],
+                                            conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc,TipoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                                [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"1111","Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc,"Responsável"],
                                                 (error, resultado, field)=> { 
                                                     conn.release();
                                                     if(error){return res.json({ error:'error sql'})}  
@@ -334,7 +334,14 @@ exports.CadSetePrest = (req,res,next) => {
                                                         subject: "Senha AgendaAnimal",
                                                         text: `Faça login novamente no site com esta senha: ${senha} e seu código é ${passRandom}`
                                                     }).then(message => {
-                                                        return res.json({ message: 'Cadastrado'})
+                                                        mysql.getConnection((error, conn) => {
+                                                            conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
+                                                            (error, results, field)=> {
+                                                                conn.release(); 
+                                                                if(error){return res.json({ error:'error sql'})}             
+                                                                return res.json({ message: 'Cadastrado'})
+                                                            })   
+                                                        })                                                          
                                                     }).catch(err =>{
                                                         return res.json({ error : "error"})
                                                     })                                    
@@ -353,8 +360,8 @@ exports.CadSetePrest = (req,res,next) => {
                             bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
                                 if(errBcrypt){ return res.json({ error: 'error sql' }) }
                                 mysql.getConnection((error, conn) => {
-                                    conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                    [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc,"Confirmado",hash,timeCodFunc,passRandom],
+                                    conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,TipoFunc,AcessoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                    [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"Confirmado",hash,timeCodFunc,passRandom,"Responsável","1111"],
                                     (error, resultado, field)=> {
                                         conn.release();
                                         if(error){return res.json({ error:'error sql'})}                                              
@@ -364,7 +371,14 @@ exports.CadSetePrest = (req,res,next) => {
                                             subject: "Senha AgendaAnimal",
                                             text: `Faça login novamente no site com esta senha: ${senha} e seu código é ${passRandom}`
                                         }).then(message => {
-                                            return res.json({ message: 'Cadastrado'})
+                                            mysql.getConnection((error, conn) => {
+                                                conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
+                                                (error, results, field)=> {
+                                                    conn.release(); 
+                                                    if(error){return res.json({ error:'error sql'})}             
+                                                    return res.json({ message: 'Cadastrado'})
+                                                })   
+                                            })    
                                         }).catch(err =>{
                                             return res.json({ error : "error"})
                                         })                                   
