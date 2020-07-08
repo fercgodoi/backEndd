@@ -150,7 +150,21 @@ exports.CadastroFuncionario = (req, res, next) => {
                 } 
                           
             }
-            
+            if(req.body.SegundInicio == ''){req.body.SegundInicio = null;}
+            if(req.body.SegundFinal == ''){req.body.SegundFinal = null;}
+            if(req.body.TercaInicio == ''){req.body.TercaInicio = null;}
+            if(req.body.TercaFinal == ''){req.body.TercaFinal = null;}
+            if(req.body.QuartInicio == ''){req.body.QuartInicio = null;}
+            if(req.body.QuartFinal == ''){req.body.QuartFinal = null;}
+            if(req.body.QuintInicio == ''){req.body.QuintInicio = null;}
+            if(req.body.QuintFinal == ''){req.body.QuintFinal = null;}
+            if(req.body.SextInicio == ''){req.body.SextInicio = null;}
+            if(req.body.SextFinal == ''){req.body.SextFinal = null;}
+            if(req.body.SabInicio == ''){req.body.SabInicio = null;}
+            if(req.body.SabFinal == ''){req.body.SabFinal = null;}
+            if(req.body.DomingInicio == ''){req.body.DomingInicio = null;}
+            if(req.body.DomingFinal == ''){req.body.DomingFinal = null;}
+
             mysql.getConnection((error, conn) => {
             conn.query('insert into horarioFunc (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
             (error, resultHorario, field)=> {
@@ -223,15 +237,13 @@ exports.CadastroFuncionario = (req, res, next) => {
                                         }).catch(err =>{
                                             return res.json({ message: "nao deu", error : err})
                                         })                                     
-                                    })
                                 })
-                            // conn.release();
+                            })
                         })          
                     }
-            })                                         
+                })                                         
             })        
-         })
-    
+        })
     })
 }
 
@@ -392,13 +404,24 @@ exports.ExcluirFunc = (req, res, next) => {
     // }) 
     mysql.getConnection((error, conn) => {
         if(error){ return res.json({ error: "error sql"}) } 
-        conn.query('delete from funcionario where idFunc=?', [req.body.idFunc],
+        conn.query('select * from funcionario where idFunc=?', [req.body.idFunc],
             (error, resultado, field)=> {
                 conn.release();
                 if(error){ return res.json({ error: "error sql"}) }
-                return res.json({ message : "deletou" });
-            })                     
+                if(resultado[0].TipoFunc == "Responsável"){
+                    return res.json({ message : "Nao pode" });
+                }
+                mysql.getConnection((error, conn) => {
+                    conn.query('delete from funcionario where idFunc=?', [req.body.idFunc],
+                        (error, resultado, field)=> {
+                            conn.release();
+                            if(error){ return res.json({ error: "error sql"}) }
+                            return res.json({ message : "deletou" });
+                        })                     
+                })                 
+            })                                
     })
+    
 }
 /*                                                    ---------------                                                              */
 
@@ -433,11 +456,11 @@ exports.AtualizarFunc = (req, res, next) => {
                                 (error, resultados, field)=> {
                                     conn.release();
                                     if(error){return res.json({ error:"error sql"})}
-                                    if(resultados.length >= 1){                            
-                                        if(resultados[0].idFunc != req.body.idFunc){
-                                            return res.json({ message: "Ja existe CRMV"})
-                                        }           
-                                    }
+                                    // if(resultados.length >= 1){                            
+                                    //     if(resultados[0].idFunc != req.body.idFunc){
+                                    //         return res.json({ message: "Ja existe CRMV"})
+                                    //     }           
+                                    // }
                                     mysql.getConnection((error, conn) =>{
                                         conn.query(`update funcionario set NomeFunc = ?,EmailFunc=?,CpfFunc= ?,RecepFunc=?,VetFunc= ?,AdminFunc= ?,FinanFunc= ?,AcessoFunc= ?, CelFunc= ?, CRMVFunc = ?,DateEmiFunc=?  where idFunc = ? `, [req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,req.body.AcessoFunc, req.body.CelFunc,req.body.CRMVFunc, req.body.DateEmiFunc,req.body.idFunc],
                                         (error, resultado, field)=> {     
@@ -448,11 +471,25 @@ exports.AtualizarFunc = (req, res, next) => {
                                             mysql.getConnection((error, conn) =>{
                                                 conn.query('select idHorarioFunc from funcionario where idFunc= ?', [req.body.idFunc],
                                                 (error, resultadoPesq, field)=> {  
-                                                    console.release();               
+                                                    conn.release();               
                                                     if(error){                
                                                         return res.json({ error:"error sql"})         
                                                     }
                                                     let horario = resultadoPesq[0].idHorarioFunc;
+                                                    if(req.body.SegundInicio == ''){req.body.SegundInicio = null;}
+                                                    if(req.body.SegundFinal == ''){req.body.SegundFinal = null;}
+                                                    if(req.body.TercaInicio == ''){req.body.TercaInicio = null;}
+                                                    if(req.body.TercaFinal == ''){req.body.TercaFinal = null;}
+                                                    if(req.body.QuartInicio == ''){req.body.QuartInicio = null;}
+                                                    if(req.body.QuartFinal == ''){req.body.QuartFinal = null;}
+                                                    if(req.body.QuintInicio == ''){req.body.QuintInicio = null;}
+                                                    if(req.body.QuintFinal == ''){req.body.QuintFinal = null;}
+                                                    if(req.body.SextInicio == ''){req.body.SextInicio = null;}
+                                                    if(req.body.SextFinal == ''){req.body.SextFinal = null;}
+                                                    if(req.body.SabInicio == ''){req.body.SabInicio = null;}
+                                                    if(req.body.SabFinal == ''){req.body.SabFinal = null;}
+                                                    if(req.body.DomingInicio == ''){req.body.DomingInicio = null;}
+                                                    if(req.body.DomingFinal == ''){req.body.DomingFinal = null;}
                                                     mysql.getConnection((error, conn) =>{
                                                         conn.query('update horarioFunc set SegundInicio=?, SegundFinal=?, TercaInicio=?, TercaFinal=?, QuartInicio=?, QuartFinal=?, QuintInicio=?, QuintFinal=?, SextInicio=?, SextFinal=?,SabInicio=?, SabFinal=?, DomingInicio=?, DomingFinal=? where idHorarioFunc =?', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal,horario],
                                                         (error, resultHorario, field)=> {
@@ -510,7 +547,7 @@ exports.Buscar = (req, res, next) => {       //rota passando parametro
         if(error){                                  //tratamento de erro da conexao
             return res.json({ error: "Falhou"})        
         } 
-        conn.query('select horarioFunc.SegundInicio as SegundInicio, horarioFunc.SegundFinal  as SegundFinal, horarioFunc.TercaInicio as TercaInicio, horarioFunc.TercaFinal as TercaFinal, horarioFunc.QuartInicio as QuartInicio, horarioFunc.QuartFinal as QuartFinal, horarioFunc.QuintInicio as QuintInicio, horarioFunc.QuintFinal as QuintFinal, horarioFunc.SextInicio as SextInicio, horarioFunc.SextFinal as SextFinal,  horarioFunc.SabInicio as SabInicio, horarioFunc.SabFinal as SabFinal, horarioFunc.DomingInicio as DomingInicio, horarioFunc.DomingFinal as DomingFinal,funcionario.NomeFunc as NomeFunc ,funcionario.EmailFunc as EmailFunc ,funcionario.CpfFunc as CpfFunc ,funcionario.RecepFunc as  RecepFunc,funcionario.VetFunc as  VetFunc,funcionario.AdminFunc as AdminFunc,funcionario.FinanFunc as FinanFunc ,funcionario.AcessoFunc as AcessoFunc ,funcionario.StatusFunc as  StatusFunc,funcionario.CRMVFunc as CRMVFunc ,funcionario.DateEmiFunc as DateEmiFunc ,funcionario.CelFunc as CelFunc  from funcionario inner join horarioFunc on horarioFunc.idHorarioFunc=  funcionario.idHorarioFunc where funcionario.idFunc = ?', [req.body.idFunc],
+        conn.query('select horarioFunc.SegundInicio as SegundInicio, horarioFunc.SegundFinal  as SegundFinal, horarioFunc.TercaInicio as TercaInicio, horarioFunc.TercaFinal as TercaFinal, horarioFunc.QuartInicio as QuartInicio, horarioFunc.QuartFinal as QuartFinal, horarioFunc.QuintInicio as QuintInicio, horarioFunc.QuintFinal as QuintFinal, horarioFunc.SextInicio as SextInicio, horarioFunc.SextFinal as SextFinal,  horarioFunc.SabInicio as SabInicio, horarioFunc.SabFinal as SabFinal, horarioFunc.DomingInicio as DomingInicio, horarioFunc.DomingFinal as DomingFinal,funcionario.* from funcionario inner join horarioFunc on horarioFunc.idHorarioFunc=  funcionario.idHorarioFunc where funcionario.idFunc = ?', [req.body.idFunc],
             (error, resultado, field)=> {
                 conn.release(); 
                 if(error){ return res.json({ error: "error sql"}) } 
@@ -543,7 +580,8 @@ exports.Buscar = (req, res, next) => {       //rota passando parametro
                             SabInicio:func.SabInicio, 
                             SabFinal:func.SabFinal, 
                             DomingInicio:func.DomingInicio, 
-                            DomingFinal:func.DomingFinal
+                            DomingFinal:func.DomingFinal,
+                            TipoFunc:func.TipoFunc
                         };
                     })
                 };
