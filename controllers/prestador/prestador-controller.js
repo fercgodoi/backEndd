@@ -360,7 +360,7 @@ exports.CadSetePrest = (req,res,next) => {
                                 conn.query('update prestadores set IdResp=? where EmailPrest= ?', [ids,req.prestadores.EmailPrest],
                                 (error, results, field)=> {
                                     conn.release(); 
-                                    if(error){return res.json({ error:'error sql'})}   
+                                    if(error){return res.json({ error:error})}   
                                 
                                     if(req.body.SegundInicio == ''){req.body.SegundInicio = null;}
                                     if(req.body.SegundFinal == ''){req.body.SegundFinal = null;}
