@@ -265,52 +265,53 @@ exports.CadCincoPrest = (req, res, next) => {
 
 
 /*                        SEIS CADASTRO  PRESTADOR                  */
-exports.CadSeisPrest = (req, res, next) => {       
-    mysql.getConnection((error, conn) =>{
-        if(error){return res.json({ error:'error sql'})}
-        conn.query('select * from responsavel where CpfResp = ?', [req.body.CpfResp],
-        (error, result, field)=> {
-            conn.release();
-            if(error){return res.json({ error:'error sql'})}
-            if(result.length >= 1){
-                if(result[0].CpfFunc == req.body.CpfFunc){
-                    return res.json({ message: "Ja existe CPF"})
-                }         
-            }
-            mysql.getConnection((error, conn) =>{
-                conn.query('select * from responsavel where CelResp= ?', [req.body.CelResp],
-                (error, result, field)=> {
-                    conn.release();
-                    if(error){return res.json({ error:'error sql'})}
-                    if(result.length >= 1){
-                        if(result[0].CelResp == req.body.CelResp){
-                            return res.json({ message: "Ja existe Numero"})
-                        }         
-                    }
-                    mysql.getConnection((error, conn) => {
-                        conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp)values(?,?,?,?)',[req.prestadores.id,req.body.NomeResp,req.body.CpfResp,req.body.CelResp],
-                        (error, resulta, field)=> { 
-                            // ,VetResp,CRMVResp,DataEmiResp ,?,?,? ,req.body.VetResp,req.body.CRMVResp,req.body.DataEmiResp
-                            conn.release();
-                            if(error){return res.json({ error: 'error sql'})} 
+// exports.CadSeisPrest = (req, res, next) => {       
+//     mysql.getConnection((error, conn) =>{
+//         if(error){return res.json({ error:'error sql'})}
+//         conn.query('select * from responsavel where CpfResp = ? and CelResp= ?', [req.body.CpfResp,req.body.CelResp],
+//         (error, result, field)=> {
+//             conn.release();
+//             if(error){return res.json({ error:'error sql'})}
+//             if(result.length >= 1){
+//                 if(result[0].CpfFunc == req.body.CpfFunc){
+//                     return res.json({ message: "Ja existe CPF"})
+//                 }      
+//                 if(result[0].CelResp == req.body.CelResp){
+//                     return res.json({ message: "Ja existe Numero"})
+//                 }     
+//             }
+//             mysql.getConnection((error, conn) =>{
+//                 conn.query('select * from responsavel where ', [req.body.CelResp],
+//                 (error, result, field)=> {
+//                     conn.release();
+//                     if(error){return res.json({ error:'error sql'})}
+//                     if(result.length >= 1){
+//                         if(result[0].CelResp == req.body.CelResp){
+//                             return res.json({ message: "Ja existe Numero"})
+//                         }         
+//                     }
+//                     mysql.getConnection((error, conn) => {
+//                         conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp)values(?,?,?,?)',[req.prestadores.id,req.body.NomeResp,req.body.CpfResp,req.body.CelResp],
+//                         (error, resulta, field)=> { conn.release();
+//                             if(error){return res.json({ error: 'error sql'})} 
 
-                            var id = resulta.insertId;  
+//                             var id = resulta.insertId;  
 
-                            mysql.getConnection((error, conn) => {
-                                conn.query('update prestadores set IdResp=? where EmailPrest= ?', [id,req.prestadores.EmailPrest],
-                                (error, results, field)=> {
-                                    conn.release(); 
-                                    if(error){return res.json({ error:'error sql'})}             
-                                    return res.json({ message: "Alterado"})
-                                })   
-                            })   
-                        })
-                    })
-                })
-            })
-        })
-    })
-}
+//                             mysql.getConnection((error, conn) => {
+//                                 conn.query('update prestadores set IdResp=? where EmailPrest= ?', [id,req.prestadores.EmailPrest],
+//                                 (error, results, field)=> {
+//                                     conn.release(); 
+//                                     if(error){return res.json({ error:'error sql'})}             
+//                                     return res.json({ message: "Alterado"})
+//                                 })   
+//                             })   
+//                         })
+//                     })
+//                 })
+//             })
+//         })
+//     })
+// }
 /*                                ---------------                       */
 
 
@@ -318,6 +319,8 @@ exports.CadSeisPrest = (req, res, next) => {
 exports.CadSetePrest = (req,res,next) => {
     mysql.getConnection((error, conn) => {
         if(error){return res.json({ error: 'error sql'})} 
+
+        if(req.body.ButtonValor === "Sim"){req.body.EmailFunc = req.prestadores.EmailPrest}
 
         conn.query('select * from funcionario where EmailFunc = ? or CpfFunc = ?', [req.body.EmailFunc,req.body.CpfFunc],
         (error, result, field)=> {
@@ -331,6 +334,307 @@ exports.CadSetePrest = (req,res,next) => {
                     return res.json({ message: "Ja existe CPF"})
                 }         
             }
+
+            mysql.getConnection((error, conn) => {
+                conn.query('select * from responsavel where CpfResp = ? and CelResp= ?', [req.body.CpfFunc,req.body.CelFunc],
+                (error, result, field)=> {
+                    conn.release();
+                    if(error){return res.json({ error:'error sql'})}
+                    if(result.length >= 1){
+                        if(result[0].CpfFunc == req.body.CpfFunc){
+                            return res.json({ message: "Ja existe CPF"})
+                        }      
+                        if(result[0].CelResp == req.body.CelResp){
+                            return res.json({ message: "Ja existe Numero"})
+                        }     
+                    }
+
+                    mysql.getConnection((error, conn) => {
+                        conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp)values(?,?,?,?)',[req.prestadores.id,req.body.NomeFunc,req.body.CpfFunc,req.body.CelFunc],
+                        (error, resulta, field)=> { conn.release();
+                            if(error){return res.json({ error: 'error sql'})} 
+
+                            var ids = resulta.insertId;  
+
+                            mysql.getConnection((error, conn) => {
+                                conn.query('update prestadores set IdResp=? where EmailPrest= ?', [ids,req.prestadores.EmailPrest],
+                                (error, results, field)=> {
+                                    conn.release(); 
+                                    if(error){return res.json({ error:'error sql'})}   
+                                
+                                    if(req.body.SegundInicio == ''){req.body.SegundInicio = null;}
+                                    if(req.body.SegundFinal == ''){req.body.SegundFinal = null;}
+                                    if(req.body.TercaInicio == ''){req.body.TercaInicio = null;}
+                                    if(req.body.TercaFinal == ''){req.body.TercaFinal = null;}
+                                    if(req.body.QuartInicio == ''){req.body.QuartInicio = null;}
+                                    if(req.body.QuartFinal == ''){req.body.QuartFinal = null;}
+                                    if(req.body.QuintInicio == ''){req.body.QuintInicio = null;}
+                                    if(req.body.QuintFinal == ''){req.body.QuintFinal = null;}
+                                    if(req.body.SextInicio == ''){req.body.SextInicio = null;}
+                                    if(req.body.SextFinal == ''){req.body.SextFinal = null;}
+                                    if(req.body.SabInicio == ''){req.body.SabInicio = null;}
+                                    if(req.body.SabFinal == ''){req.body.SabFinal = null;}
+                                    if(req.body.DomingInicio == ''){req.body.DomingInicio = null;}
+                                    if(req.body.DomingFinal == ''){req.body.DomingFinal = null;}
+
+                                    mysql.getConnection((error, conn) => {
+                                        conn.query('insert into horarioFunc (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
+                                        (error, resultHorario, field)=> {
+                                            conn.release();
+                                            if(error){return res.json({ error:'error sql'})}      
+
+                                            let idHorarios = resultHorario.insertId; 
+                                                if(req.body.CRMVFunc != "" && req.body.CRMVFunc != null && req.body.CRMVFunc != undefined)
+                                                {
+                                                    mysql.getConnection((error, conn) => {
+                                                        conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
+                                                        (error, result, field)=> {
+                                                            conn.release();
+                                                            if(error){return res.json({ error:'error sql'})}  
+                                                            if(result.length >= 1){
+                                                                if(result[0].CRMVFunc == req.body.CRMVFunc){
+                                                                    return res.json({ message: "Ja existe CRMV"})
+                                                                }           
+                                                            }                      
+
+                                                            let passRandom = getRandomInt();
+                                                            let timeCodFunc = Date.now();
+                                                            let senha = "123456";
+                                                            bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
+                                                                if(errBcrypt){ return res.json({ error: 'error sql' }) }
+
+                                                                transporter.sendMail({
+                                                                    from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
+                                                                    to: req.body.EmailFunc,              
+                                                                    subject: "Senha AgendaAnimal",
+                                                                    text: `Faça login novamente no site com esta senha: ${senha} e seu código é ${passRandom}`
+                                                                }).then(message => {
+                                                                    mysql.getConnection((error, conn) => {
+                                                                        conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc,TipoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                                                            [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"1111","Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc,"Responsável"],
+                                                                            (error, resultado, field)=> { 
+                                                                                conn.release();
+                                                                                if(error){return res.json({ error:'error sql'})}  
+
+                                                                                mysql.getConnection((error, conn) => {
+                                                                                    conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
+                                                                                    (error, results, field)=> {
+                                                                                        conn.release(); 
+                                                                                        if(error){return res.json({ error:'error sql'})}             
+                                                                                        return res.json({ message: 'Cadastrado'})
+                                                                                    })   
+                                                                                }) 
+                                                                        })
+                                                                    })                                                         
+                                                                }).catch(err =>{
+                                                                    return res.json({ error : "error"})
+                                                                })                                    
+                                                                
+                                                            })
+                                                        })
+                                                    })
+                                                }
+                                                else{
+                                                    let passRandom = getRandomInt();
+                                                    let timeCodFunc = Date.now();
+                                                    let senha = "123456";
+                                                    bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
+                                                        if(errBcrypt){ return res.json({ error: 'error sql' }) }
+                                                            transporter.sendMail({
+                                                                    from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
+                                                                    to: req.body.EmailFunc,              
+                                                                    subject: "Senha AgendaAnimal",
+                                                                    text: `Faça login novamente no site com esta senha: ${senha} e seu código é ${passRandom}`
+                                                                }).then(message => {
+                                                                    mysql.getConnection((error, conn) => {
+                                                                        conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,TipoFunc,AcessoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                                                                        [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"Confirmado",hash,timeCodFunc,passRandom,"Responsável","1111"],
+                                                                        (error, resultado, field)=> {
+                                                                            conn.release();
+                                                                            if(error){return res.json({ error:'error sql'})}                                              
+                                                        
+                                                                            mysql.getConnection((error, conn) => {
+                                                                                conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
+                                                                                (error, results, field)=> {
+                                                                                    conn.release(); 
+                                                                                    if(error){return res.json({ error:'error sql'})}             
+                                                                                    return res.json({ message: 'Cadastrado'})
+                                                                                })   
+                                                                            })  
+                                                                        })
+                                                                    })  
+                                                                }).catch(err =>{
+                                                                    return res.json({ error : "error"})
+                                                                })                                   
+                                                    })        
+                                                } 
+                                            })
+                                    })
+    
+                                })
+                            }) 
+                        })
+                    })       
+                })
+            })     
+         })
+    })
+}
+/*                                ---------------                       */
+
+//////////////////////////////////////////// BUSCAR DADOS //////////////////////////////////////////////
+exports.BuscaPrest = (req,res,next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: 'error sql'})} 
+
+        conn.query('select conta.*, horarioPrest.*, prestadores.*,responsavel.*,funcionario.EmailFunc from prestadores inner join conta on conta.idCont = prestadores.idCont inner join horarioPrest on horarioPrest.idHorarioPrest = prestadores.idHorarioPrest inner join responsavel on responsavel.idResp = prestadores.idResp inner join funcionario on funcionario.idPrest = prestadores.idPrest where prestadores.idPrest=?', [req.funcionario.idPrest],
+        (error, result, field)=> {
+            conn.release();
+            if(error){return res.json({ error:'error sql'})}
+
+            const response = {
+                Prestadores: result.map(prest => {
+                    return  {
+                        ContaCont: prest.ContaCont ,
+                        BancoCont: prest.BancoCont ,
+                        AgenciaCont: prest.AgenciaCont ,
+                        TipoCont: prest.TipoCont ,
+                        CartCont: prest.CartCont ,
+                        CieloCont: prest.CieloCont ,
+                        SegundInicio: prest.SegundInicio ,
+                        SegundFinal: prest.SegundFinal ,
+                        TercaInicio: prest.TercaInicio ,
+                        TercaFinal: prest.TercaFinal ,
+                        QuartInicio: prest.QuartInicio ,
+                        QuartFinal: prest.QuartFinal ,
+                        QuintInicio: prest.QuintInicio ,
+                        QuintFinal: prest.QuintFinal ,
+                        SextInicio: prest.SextInicio ,
+                        SextFinal: prest.SextFinal ,
+                        SabInicio: prest.SabInicio ,
+                        SabFinal: prest.SabFinal ,
+                        DomingInicio: prest.DomingInicio ,
+                        DomingFinal: prest.DomingFinal ,
+                        NomeFantsPrest: prest.NomeFantsPrest ,
+                        CnpjPrest: prest.CnpjPrest ,
+                        CelularPrest: prest.CelularPrest ,
+                        WhatsPrest: prest.WhatsPrest ,
+                        EmailPrest: prest.EmailPrest ,
+                        CepPrest: prest.CepPrest ,
+                        NumPrest: prest.NumPrest ,
+                        EmergenciaPrest: prest.EmergenciaPrest ,
+                        descricaoPrest: prest.descricaoPrest ,
+                        longitude: prest.longitude ,
+                        latitude: prest.latitude ,
+                        PetShopPrest: prest.PetShopPrest ,
+                        ClinicaPrest: prest.ClinicaPrest ,
+                        OngPrest: prest.OngPrest ,
+                        PasseadorPrest: prest.PasseadorPrest ,
+                        HotelPrest: prest.HotelPrest ,
+                        NomeResp: prest.NomeResp ,
+                        CpfResp: prest.CpfResp ,
+                        CelResp: prest.CelResp,
+                        EmailFunc: prest.EmailFunc,
+                        idResp: prest.IdResp,
+                        idHorarioPrest: prest.idHorarioPrest,
+                        idConta: prest.idConta,
+                        idFunc: prest.idFunc
+                    };
+                })
+            };
+
+            return res.json({ response });
+            // var cpf = result[0].CpfResp;
+
+            // mysql.getConnection((error, conn) => {        
+            //     conn.query('select EmailFunc from funcionario where CpfFunc = ?', [cpf],
+            //     (error, resulta, field)=> {
+            //         conn.release();
+            //         if(error){return res.json({ error:'error sql'})}
+
+            //         var emailFunc= resulta[0].EmailFunc;
+            //         return res.json(response, emailFunc);
+
+            //     })
+            // })
+        })
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+//////////////////////////////////////////// BUSCAR SERVIÇOS //////////////////////////////////////////////
+exports.BuscaServicosPrest = (req,res,next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: 'error sql'})} 
+
+        conn.query('select * from servico where idPrest=?', [req.funcionario.idPrest],
+        (error, result, field)=> {
+            conn.release();
+            if(error){return res.json({ error:'error sql'})}
+
+            const response = {
+                Servicos: result.map(serv => {
+                    return  {
+                        idServ: serv.idServ ,
+                        tipoServ: serv.tipoServ ,
+                        valorServ: serv.valorServ ,
+                    };
+                })
+            };
+
+            return res.json({ response });
+        })
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////// EDITAR SERVIÇOS //////////////////////////////////////////////
+exports.EditarServicosPrest = (req,res,next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: 'error sql'})} 
+
+        conn.query('update servico set tipoServ=?, valorServ=? where idServ=?;', [req.body.tipoServ,req.body.valorServ,req.body.idServ],
+        (error, result, field)=> {
+            conn.release();
+            if(error){return res.json({ error:'error sql'})}
+
+            return res.json({ message: "alterado" });
+        })
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////// EXLUIR SERVIÇOS //////////////////////////////////////////////
+exports.ExcluirServicosPrest = (req,res,next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: 'error sql'})} 
+
+        conn.query('delete from servico where idServ=?;', [req.body.idServ],
+        (error, result, field)=> {
+            conn.release();
+            if(error){return res.json({ error:'error sql'})}
+
+            return res.json({ message: "excluido" });
+        })
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////// ALTERAR PRESTADORES //////////////////////////////////////////////
+exports.EditarPrest = (req,res,next) => {
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: 'error sql'})} 
+
+        conn.query('update conta set ContaCont=?,BancoCont=?,AgenciaCont=?,TipoCont=?,CartCont=?,CieloCont=? where idCont =? and idPrest=?', 
+        [req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont,req.body.idCont,req.funcionario.idPrest],
+        (error, result, field)=> {
+            conn.release();
+            if(error){return res.json({ error:error})}
+
             if(req.body.SegundInicio == ''){req.body.SegundInicio = null;}
             if(req.body.SegundFinal == ''){req.body.SegundFinal = null;}
             if(req.body.TercaInicio == ''){req.body.TercaInicio = null;}
@@ -347,102 +651,44 @@ exports.CadSetePrest = (req,res,next) => {
             if(req.body.DomingFinal == ''){req.body.DomingFinal = null;}
 
             mysql.getConnection((error, conn) => {
-                conn.query('insert into horarioFunc (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
-                (error, resultHorario, field)=> {
+                conn.query('update horarioPrest set SegundInicio=?,SegundFinal=?,TercaInicio=?,TercaFinal=?,QuartInicio=?,QuartFinal=?,QuintInicio=?,QuintFinal=?,SextInicio=?,SextFinal=?,SabInicio=?,SabFinal=?,DomingInicio=?,DomingFinal=? where idHorarioPrest =?', 
+                [req.body.SegundInicio,req.body.SegundFinal,req.body.TercaInicio,req.body.TercaFinal,req.body.QuartInicio,req.body.QuartFinal,req.body.QuintInicio,req.body.QuintFinal,req.body.SextInicio,req.body.SextFinal,req.body.SabInicio,req.body.SabFinal,req.body.DomingInicio,req.body.DomingFinal,req.body.idHorarioPrest],
+                (error, result, field)=> {
                     conn.release();
-                    if(error){return res.json({ error:'error sql'})}      
+                    if(error){return res.json({ error:error})}
 
-                    let idHorarios = resultHorario.insertId; 
-                        if(req.body.CRMVFunc != "" && req.body.CRMVFunc != null && req.body.CRMVFunc != undefined)
-                        {
+                    mysql.getConnection((error, conn) => {
+                        conn.query('update prestadores set NomeFantsPrest=?,CelularPrest=?,WhatsPrest=?,EmailPrest=?,CepPrest=?,NumPrest=?,EmergenciaPrest=?,descricaoPrest=?,longitude=?,latitude=?,PetShopPrest=?,ClinicaPrest=?,OngPrest=?,PasseadorPrest=?,HotelPrest=? and idPrest=?', 
+                        [req.body.NomeFantsPrest,req.body.CelularPrest,req.body.WhatsPrest,req.body.EmailPrest,req.body.CepPrest,req.body.NumPrest,req.body.EmergenciaPrest,req.body.descricaoPrest,req.body.longitude,req.body.latitude,req.body.PetShopPrest,req.body.ClinicaPrest,req.body.OngPrest,req.body.PasseadorPrest,req.body.HotelPrest,req.funcionario.idPrest],
+                        (error, result, field)=> {
+                            conn.release();
+                            if(error){return res.json({ error:error})}
+
+                            // console.log( [req.body.NomeResp,req.body.CpfResp,req.body.CelResp,req.body.idResp,req.funcionario.idPrest]);
                             mysql.getConnection((error, conn) => {
-                                conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
+                                conn.query('update responsavel set NomeResp=?,CpfResp=?,CelResp=? where IdResp=? and idPrest=?', 
+                                [req.body.NomeResp,req.body.CpfResp,req.body.CelResp,req.body.idResp,req.funcionario.idPrest],
                                 (error, result, field)=> {
                                     conn.release();
-                                    if(error){return res.json({ error:'error sql'})}  
-                                    if(result.length >= 1){
-                                        if(result[0].CRMVFunc == req.body.CRMVFunc){
-                                            return res.json({ message: "Ja existe CRMV"})
-                                        }           
-                                    }                      
+                                    if(error){return res.json({ error:error})}
 
-                                    let passRandom = getRandomInt();
-                                    let timeCodFunc = Date.now();
-                                    let senha = "123456";
-                                    bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
-                                        if(errBcrypt){ return res.json({ error: 'error sql' }) }
+                                    mysql.getConnection((error, conn) => {
+                                        conn.query('update funcionario set EmailFunc=? where idFunc=? and idPrest=?', 
+                                        [req.body.EmailFunc,req.body.idFunc,req.funcionario.idPrest],
+                                        (error, result, field)=> {
+                                            conn.release();
+                                            if(error){return res.json({ error:error})}
 
-                                        transporter.sendMail({
-                                            from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
-                                            to: req.body.EmailFunc,              
-                                            subject: "Senha AgendaAnimal",
-                                            text: `Faça login novamente no site com esta senha: ${senha} e seu código é ${passRandom}`
-                                        }).then(message => {
-                                            mysql.getConnection((error, conn) => {
-                                                conn.query('insert into funcionario(idPrest,idHorarioFunc,CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,AcessoFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,CRMVFunc,DateEmiFunc,TipoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                                    [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"1111","Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc,"Responsável"],
-                                                    (error, resultado, field)=> { 
-                                                        conn.release();
-                                                        if(error){return res.json({ error:'error sql'})}  
-
-                                                        mysql.getConnection((error, conn) => {
-                                                            conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
-                                                            (error, results, field)=> {
-                                                                conn.release(); 
-                                                                if(error){return res.json({ error:'error sql'})}             
-                                                                return res.json({ message: 'Cadastrado'})
-                                                            })   
-                                                        }) 
-                                                })
-                                            })                                                         
-                                        }).catch(err =>{
-                                            return res.json({ error : "error"})
-                                        })                                    
-                                         
+                                            return res.json({ message:'Alterado'})
+                                        })
                                     })
                                 })
                             })
-                        }
-                        else{
-                            let passRandom = getRandomInt();
-                            let timeCodFunc = Date.now();
-                            let senha = "123456";
-                            bcrypt.hash(senha, 10, (errBcrypt, hash) =>{
-                                if(errBcrypt){ return res.json({ error: 'error sql' }) }
-                                     transporter.sendMail({
-                                            from: "  AgendaAnimal <atendimento@agendaanimal.com.br>",
-                                            to: req.body.EmailFunc,              
-                                            subject: "Senha AgendaAnimal",
-                                            text: `Faça login novamente no site com esta senha: ${senha} e seu código é ${passRandom}`
-                                        }).then(message => {
-                                            mysql.getConnection((error, conn) => {
-                                                conn.query('insert into funcionario(idPrest,idHorarioFunc, CelFunc, NomeFunc,EmailFunc,CpfFunc,RecepFunc ,VetFunc,AdminFunc ,FinanFunc ,StatusFunc , SenhaFunc,TimeFunc,CodFunc,TipoFunc,AcessoFunc) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)',
-                                                [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"Confirmado",hash,timeCodFunc,passRandom,"Responsável","1111"],
-                                                (error, resultado, field)=> {
-                                                    conn.release();
-                                                    if(error){return res.json({ error:'error sql'})}                                              
-                                
-                                                    mysql.getConnection((error, conn) => {
-                                                        conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
-                                                        (error, results, field)=> {
-                                                            conn.release(); 
-                                                            if(error){return res.json({ error:'error sql'})}             
-                                                            return res.json({ message: 'Cadastrado'})
-                                                        })   
-                                                    })  
-                                                })
-                                            })  
-                                        }).catch(err =>{
-                                            return res.json({ error : "error"})
-                                        })                                   
-                            })        
-                        } 
-                    })  
-            })     
-         })
+                        })
+                    })
+                })
+            })
+        })
     })
 }
-/*                                ---------------                       */
-
-
-
+/////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -617,7 +617,8 @@ exports.FiltroFunc = (req, res, next) => {
                             HorarioFunc:func.HorarioFunc,
                             CRMVFunc:func.CRMVFunc,
                             DateEmiFunc:func.DateEmiFunc,
-                            CelFunc: func.CelFunc
+                            CelFunc: func.CelFunc,
+                            TipoFunc:func.TipoFunc
                         };
                     })
                 };

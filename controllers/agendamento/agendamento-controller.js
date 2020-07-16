@@ -37,7 +37,7 @@ exports.buscarAgend = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){return res.json({ error: 'erro sql'})} 
 
-        conn.query('select cliente.nomeCli,pet.especiePet, pet.nomePet, pet.dataCastPet,pet.sexoPet, pet.aniverPet,pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idAgen = ? and agendamento.StatusAgen="Pendente"', [req.body.idAgend],
+        conn.query('select cliente.nomeCli,pet.especiePet, pet.nomePet, agendamento.idPet, pet.dataCastPet,pet.sexoPet, pet.aniverPet,pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idAgen = ? and agendamento.StatusAgen="Pendente"', [req.body.idAgend],
             (error, resultado, field)=> {
                 conn.release();
                 if(error){return res.json({ error: 'erro sql'})}          
@@ -57,7 +57,8 @@ exports.buscarAgend = (req, res, next) => {
                             sexoPet: agend.sexoPet,
                             dataPet: agend.aniverPet,
                             castPet: agend.castPet,
-                            especiePet: agend.especiePet
+                            especiePet: agend.especiePet,
+                            idPet: agend.idPet
                         };
                     })
                 };

@@ -8,5 +8,5 @@ router.post('/CadProtuario',login.obrigatorio,ProntuarioController.CadProntuario
 router.post('/BuscarPront',login.obrigatorio,ProntuarioController.buscarPront);
 router.post('/FiltroPront',login.obrigatorio,ProntuarioController.FiltroPront);
 router.post('/BuscarInfo',login.obrigatorio,ProntuarioController.BuscarInfo);
-
+router.post('/BuscarInfoPet', login.obrigatorio,ProntuarioController.BuscarInfoPet);
 module.exports = router;

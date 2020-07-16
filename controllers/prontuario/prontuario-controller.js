@@ -128,3 +128,22 @@ exports.BuscarInfo = (req, res, next) => {       //rota passando parametro
         )
     })
 }
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////// PRONTUARIO PETS  /////////////////////////////////////////////////////////////////////
+exports.BuscarInfoPet = (req, res, next) => {       //rota passando parametro
+
+    mysql.getConnection((error, conn) => {
+        if(error){ return res.json({ error:'error sql'})};
+
+        conn.query('select * from consulta where idPet=?',[req.body.idPet],
+            (error, resultado, fields) => {
+                conn.release();
+
+            if(error){ return res.json({ error:'error sql'})};
+            if(resultado.length == 0 || resultado.length == [] ){return res.json({ message: "nao tem"})}
+            return res.json({ message: "tem"})
+        })
+    })
+}
