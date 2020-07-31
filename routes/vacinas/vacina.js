@@ -10,5 +10,9 @@ router.post('/FiltroVac', login.obrigatorio,vacinaController.FiltroVac);
 router.post('/BuscarInfo', login.obrigatorio,vacinaController.BuscarInfo); 
 router.post('/buscarVacina', login.obrigatorio,vacinaController.buscarVacinas); 
 
+router.post('/buscarVacinasSolicitadas', login.obrigatorio,vacinaController.buscarVacinasSolicitadas); 
+router.post('/AprovarVacinasSolicitadas', login.obrigatorio,vacinaController.AprovarVacinasSolicitadas); 
+router.post('/NegarVacinasSolicitadas', login.obrigatorio,vacinaController.NegarVacinasSolicitadas); 
+
 
 module.exports = router; 

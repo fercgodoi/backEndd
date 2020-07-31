@@ -16,7 +16,9 @@ exports.buscarAgendamento = (req, res, next) => {
                             nomeCli: agend.nomeCli,
                             racaPet: agend.racaPet,
                             nomePet: agend.nomePet,
+                            // fotoPet: agend.fotoPet,
                             fotoPet: agend.fotoPet,
+                            // 'https://api-agenda-teste.herokuapp.com/' + 
                             tipoServicoAgen: agend.tipoServicoAgen,
                             formaPagtAgen: agend.formaPagtAgen,
                             DataAgen: agend.DataAgen,
@@ -49,6 +51,7 @@ exports.buscarAgend = (req, res, next) => {
                             racaPet: agend.racaPet,
                             nomePet: agend.nomePet,
                             fotoPet: agend.fotoPet,
+                            //  fotoPet: 'https://api-agenda-teste.herokuapp.com/'+ agend.fotoPet,
                             tipoServicoAgen: agend.tipoServicoAgen,
                             formaPagtAgen: agend.formaPagtAgen,
                             DataAgen: agend.DataAgen,

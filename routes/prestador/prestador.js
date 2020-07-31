@@ -16,5 +16,6 @@ router.post('/BuscaServicoPrest',login.obrigatorio,PrestadorController.BuscaServ
 router.post('/EditarServicosPrest',login.obrigatorio,PrestadorController.EditarServicosPrest);
 router.post('/ExcluirServicosPrest',login.obrigatorio,PrestadorController.ExcluirServicosPrest);
 router.post('/EditarPrest',login.obrigatorio,PrestadorController.EditarPrest);
+router.post('/BuscarPrest2',login.obrigatorio,PrestadorController.BuscaPrest2);
 
 module.exports = router;

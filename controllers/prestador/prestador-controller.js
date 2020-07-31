@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const uploadImage = require('../../middleware/imgPrest');
+const multer = require('multer');
 
 /*                                                    ENVIAR EMAIL                                                               */
 let transporter = nodemailer.createTransport({
@@ -21,6 +22,35 @@ let transporter = nodemailer.createTransport({
 function getRandomInt() { return Math.floor(Math.random() * (999999 - 100000)) + 100000; }
 /*                                                    ---------------                                                              */
 
+/*                        PRIMEIRO CADASTRO  PRESTADOR                  */
+exports.BuscaPrest2 = (req, res, next) => {       
+    mysql.getConnection((error, conn) =>{
+        if(error){return res.json({ error:'error sql'})}
+
+        conn.query('select * from prestadores where idPrest = ?', [req.funcionario.idPrest],
+        (error, results, field)=> {
+            conn.release(); 
+            if(error){return res.json({ error:'error sql'})}
+
+            const response = {
+                Prestadores: results.map(prest => {
+                    return{
+                        fotoPrest: process.env.URL_HOST + prest.LogoPrest,
+                        NomeFantsPrest: prest.NomeFantsPrest,
+                        PetShopPrest: prest.PetShopPrest,
+                        ClinicaPrest: prest.ClinicaPrest,
+                        OngPrest: prest.OngPrest,
+                        PasseadorPrest: prest.PasseadorPrest,
+                        HotelPrest: prest.HotelPrest
+                    }
+                })
+            }
+
+            return res.json({ response})
+            
+        })
+    })
+}
 
                         
 
@@ -185,48 +215,50 @@ exports.CadQuartPrest = (req, res, next) => {
 
 /*                        CINCO CADASTRO  PRESTADOR                  */
 exports.CadCincoPrest = (req, res, next) => {      
-    // console.log(req.body.AgenciaCont);
+     console.log(req.body);
     /*                                CADASTRO DA IMAGEM                       */   
-    // uploadImage.upload(req, res, function (err) {
-    //     console.log("entrou no controller")
-    // // if(req.file){
-    //     console.log(req.fileFiltImgResp)
-    //     if (err instanceof multer.MulterError) {
-    //         if(err.message == 'File too large'){
-    //             err.message = 'Arquivo maior que 5MB'
-    //         }
-    //         return res.json({err:'error multer', message: err.message})
+    uploadImage.upload(req, res, function (err) {
+        console.log("entrou no controller")
+        console.log(req.fileFiltImgResp)
+        if (err instanceof multer.MulterError) {
+            if(err.message == 'File too large'){
+                err.message = 'Arquivo maior que 5MB'
+            }
+            return res.json({err:'error multer', message: err.message})
         
-    //     } else if (err) {
-    //         return res.json({err: err, message:'error ao enviar imagem'})
-    //     } else if (req.fileFiltImgResp === 'fail'){
-    //         //resp += ' '+ req.fileFiltImgResp
-    //         return res.json({ message: req.respError, msg:'error up img' })
-    //     } else if(req.fileFiltImgResp === 'ok') {
-    //         console.log(req.file.path)
-    //         req.imagem = req.file.path
-    //         // funcSql()
+        } else if (err) {
+            return res.json({err: err, message:'error ao enviar imagem'})
+        } else if (req.fileFiltImgResp === 'fail'){
+            //resp += ' '+ req.fileFiltImgResp
+            return res.json({ message: req.respError, msg:'error up img' })
+        } else if(req.fileFiltImgResp === 'ok') {
+            console.log(req.file.path)
+            req.imagem = req.file.path
+            funcSql()
+            //return res.json({ message: 'salvoou' , msg: req.file.path })
+        }
+    })
 
-    //         return res.json({ message: req.respError, msg:'req.file.path' })
-
-            mysql.getConnection((error, conn) =>{
-                if(error){return res.json({ error:'error sql'})}
-        
-                conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
-                (error, resulta, field)=> { 
-                    conn.release();
-                    if(error){return res.json({ error:'error sql'})}  
-                    var id = resulta.insertId; 
-                    mysql.getConnection((error, conn) => {
-                        conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,"123",req.body.OngPrest,req.prestadores.EmailPrest],
-                        (error, results, field)=> { 
-                            conn.release();
-                            if(error){return res.json({ error:error})}            
-                            return res.json({ message: "Alterado"})
-                        }) 
-                    })      
-                })
+    function funcSql(){
+        mysql.getConnection((error, conn) =>{
+            if(error){return res.json({ error:'error sql'})}
+    
+            conn.query('insert into conta (idPrest,ContaCont,BancoCont,AgenciaCont,TipoCont,CartCont,CieloCont) values (?,?,?,?,?,?,?)', [req.prestadores.id,req.body.ContaCont,req.body.BancoCont,req.body.AgenciaCont,req.body.TipoCont,req.body.CartCont,req.body.CieloCont],
+            (error, resulta, field)=> { 
+                conn.release();
+                if(error){return res.json({ error:'error sql'})}  
+                let id = resulta.insertId; 
+                mysql.getConnection((error, conn) => {
+                    conn.query('update prestadores set idCont=?,EmergenciaPrest=?,LogoPrest=?,OngPrest=? where EmailPrest= ?', [id,req.body.EmergenciaPrest,req.imagem,req.body.OngPrest,req.prestadores.EmailPrest],
+                    (error, results, field)=> { 
+                        conn.release();
+                        if(error){return res.json({ error:error})}            
+                        return res.json({ message: "Alterado"})
+                    }) 
+                })      
             })
+        })
+    }  
 
             // //Provavel por aqui o middleware do sharp e colocar o funcsql() apos essa func do sharp
             // compressImg.compressImage(req.file)

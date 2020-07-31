@@ -36,21 +36,24 @@ exports.buscarPront = (req, res, next) => {       //rota passando parametro
     mysql.getConnection((error, conn) => {
         if(error){ return res.json({ error:'error sql'})};
 
-        conn.query('select cliente.nomeCli as nomeCli, pet.nomePet as nomePet, pet.rgPet as rgPet, consulta.idConst as idConst from consulta inner join pet on consulta.idPet =pet.idPet inner join cliente on pet.idCli  = cliente.idCli where consulta.idPrest= ?',[req.funcionario.idPrest],
+        conn.query('select cliente.nomeCli as nomeCli,pet.fotoPet, pet.nomePet as nomePet, pet.rgPet as rgPet, consulta.idConst as idConst from consulta inner join pet on consulta.idPet =pet.idPet inner join cliente on pet.idCli  = cliente.idCli where consulta.idPrest= ?',[req.funcionario.idPrest],
         (error, resultado, fields) => {
             conn.release();
 
             if(error){ return res.json({ error:'error sql'})};
-            if(resultado.length == 0){
-                return res.json({ message: "Prontuario nao encontrado"})
-            }
+            // if(resultado.length == 0){
+            //     return res.json({ message: "Prontuario nao encontrado"})
+            // }
             const response = {
                 Prontuario: resultado.map(prod => {
                     return  {
                         nomeCli: prod.nomeCli ,
                         nomePet: prod.nomePet ,
                         rgPet: prod.rgPet ,
-                        idConst: prod.idConst 
+                        idConst: prod.idConst,
+                        // fotoPet : prod.fotoPet,
+                        fotoPet: prod.fotoPet,
+                        // 'https://api-agenda-teste.herokuapp.com/'+ 
                     };
                 })
             };

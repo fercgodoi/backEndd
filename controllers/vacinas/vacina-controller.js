@@ -32,7 +32,7 @@ exports.buscarVacinas = (req, res, next) => {
 
     mysql.getConnection((error, conn) => {
         if(error){return res.json({ error: "error sql"})}    
-        conn.query('select cliente.nomeCli as nomeCli, pet.nomePet as nomePet, pet.rgPet as rgPet, vacina.idVacina as idVacina, vacina.nomeVacina as nomeVacina, vacina.idPet as idPet, vacina.dataApliVacina as dataApliVacina from vacina inner join pet on vacina.idPet =pet.idPet inner join cliente on pet.idCli  = cliente.idCli where vacina.idPrest = ? and vacina.statusVacina = "Vigente"',[req.funcionario.idPrest],
+        conn.query('select cliente.nomeCli as nomeCli,pet.fotoPet,pet.nomePet as nomePet, pet.rgPet as rgPet, vacina.idVacina as idVacina, vacina.nomeVacina as nomeVacina, vacina.idPet as idPet, vacina.dataApliVacina as dataApliVacina from vacina inner join pet on vacina.idPet =pet.idPet inner join cliente on pet.idCli  = cliente.idCli where vacina.idPrest = ? and vacina.statusVacina = "Vigente"',[req.funcionario.idPrest],
             (error, resultado, fields) => {
                 conn.release();
 
@@ -49,7 +49,10 @@ exports.buscarVacinas = (req, res, next) => {
                             NomePet: vac.nomePet ,
                             rgPet: vac.rgPet ,
                             nomeVacina: vac.nomeVacina ,
-                            dataApliVacina: vac.dataApliVacina
+                            dataApliVacina: vac.dataApliVacina,
+                            // fotoPet: vac.fotoPet,
+                            fotoPet: vac.fotoPet,
+                            // 'https://api-agenda-teste.herokuapp.com/' + 
                         };
                     })
                 };
@@ -131,3 +134,74 @@ exports.BuscarInfo = (req, res, next) => {
         )
     })
 }
+
+
+///////////////////////////////////////////////////////////////  BUSCAR VACINAS SOLICITADAS//////////////////////////////////////////////////////////////////////////
+exports.buscarVacinasSolicitadas = (req, res, next) => {
+
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: "error sql"})}    
+        conn.query('select cliente.nomeCli as nomeCli,pet.fotoPet,pet.nomePet as nomePet, pet.rgPet as rgPet, vacina.idVacina as idVacina, vacina.nomeVacina as nomeVacina, vacina.idPet as idPet, vacina.dataApliVacina as dataApliVacina from vacina inner join pet on vacina.idPet =pet.idPet inner join cliente on pet.idCli  = cliente.idCli where vacina.emailVetVacina=?  and vacina.statusVacina = "Pendente"',[req.funcionario.EmailFunc],
+            (error, resultado, fields) => {
+                conn.release();
+
+                if(error){return res.json({ error: "error sql"})}    
+                if(resultado.length == 0){
+                    return res.json({ message: "Vacina nao encontrado"})
+                }
+                const response = {
+                    Vacina: resultado.map(vac => {
+                        return  {
+                            idVacina: vac.idVacina ,
+                            idPet: vac.idPet ,
+                            nomeCli: vac.nomeCli ,
+                            NomePet: vac.nomePet ,
+                            rgPet: vac.rgPet ,
+                            nomeVacina: vac.nomeVacina ,
+                            dataApliVacina: vac.dataApliVacina,
+                            // fotoPet: vac.fotoPet,
+                            fotoPet:  vac.fotoPet,
+                            // 'https://api-agenda-teste.herokuapp.com/' +
+                        };
+                    })
+                };
+                return res.json({ response });              
+            }
+        )
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////  APROVADAS VACINAS SOLICITADAS //////////////////////////////////////////////////////////////////////////
+exports.AprovarVacinasSolicitadas = (req, res, next) => {
+
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: "error sql"})}    
+        conn.query('update vacina set statusVacina="Vigente" where idVacina=? and emailVetVacina=?',[req.body.idVacina,req.funcionario.EmailFunc],
+            (error, resultado, fields) => {
+                conn.release();
+
+                if(error){return res.json({ error: "error sql"})}   
+                return res.json({ message : 'Alterado' });              
+            }
+        )
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+///////////////////////////////////////////////////////////////  NEGAR VACINAS SOLICITADAS //////////////////////////////////////////////////////////////////////////
+exports.NegarVacinasSolicitadas = (req, res, next) => {
+
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: "error sql"})}    
+        conn.query('update vacina set statusVacina="Recusada" where idVacina=? and emailVetVacina=?',[req.body.idVacina,req.funcionario.EmailFunc],
+            (error, resultado, fields) => {
+                conn.release();
+
+                if(error){return res.json({ error: "error sql"})}   
+                return res.json({ message : 'Alterado' });              
+            }
+        )
+    })
+}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

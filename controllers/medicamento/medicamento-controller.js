@@ -43,7 +43,7 @@ exports.CadastroMed = (req, res, next) => {
 exports.buscarMed = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){return res.json({ error: 'erro sql'})} 
-        conn.query('select cliente.nomeCli as nomeCli, pet.nomePet as nomePet, pet.rgPet as rgPet, medicamento.idMed as idMed, medicamento.NomeMed as NomeMed, medicamento.idPet as idPet from medicamento inner join pet on medicamento.idPet =pet.idPet  inner join cliente on pet.idCli  = cliente.idCli where medicamento.idPrest = ? and medicamento.statusMed = "Vigente"',[req.funcionario.idPrest],
+        conn.query('select cliente.nomeCli as nomeCli,pet.fotoPet, pet.nomePet as nomePet, pet.rgPet as rgPet, medicamento.idMed as idMed, medicamento.NomeMed as NomeMed, medicamento.idPet as idPet from medicamento inner join pet on medicamento.idPet =pet.idPet  inner join cliente on pet.idCli  = cliente.idCli where medicamento.idPrest = ? and medicamento.statusMed = "Vigente"',[req.funcionario.idPrest],
         (error, resultado, fields) => {
             conn.release();  
             if(error){return res.json({ error: 'erro sql'})} 
@@ -59,7 +59,9 @@ exports.buscarMed = (req, res, next) => {
                         rgPet: med.rgPet ,
                         idMed: med.idMed ,
                         NomeMed: med.NomeMed ,
-                        idPet: med.idPet
+                        idPet: med.idPet,
+                        fotoPet: med.fotoPet,
+                        // fotoPet: 'https://api-agenda-teste.herokuapp.com/' + med.fotoPet,
                     };
                 })
             };            
@@ -109,7 +111,7 @@ exports.BuscarInfo = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){return res.json({ error: 'erro sql'})} 
 
-        conn.query('select pet.nomePet as nomePet, pet.rgPet as rgPet, medicamento.nomeMed as nomeMed, medicamento.doseMed as doseMed, medicamento.loteMed as loteMed, medicamento.rotinaMed as rotinaMed, medicamento.observacaoMed as observacaoMed, medicamento.dataIniMed as dataIniMed, medicamento.dataFinMed as dataFinMed, medicamento.nomeEstbMed as nomeEstbMed, medicamento.emailEstbMed as emailEstbMed from medicamento inner join pet on medicamento.idPet = pet.idPet where  medicamento.idMed = ?',[req.body.idMed],
+        conn.query('select pet.nomePet as nomePet,pet.rgPet as rgPet, medicamento.nomeMed as nomeMed, medicamento.doseMed as doseMed, medicamento.loteMed as loteMed, medicamento.rotinaMed as rotinaMed, medicamento.observacaoMed as observacaoMed, medicamento.dataIniMed as dataIniMed, medicamento.dataFinMed as dataFinMed, medicamento.nomeEstbMed as nomeEstbMed, medicamento.emailEstbMed as emailEstbMed from medicamento inner join pet on medicamento.idPet = pet.idPet where  medicamento.idMed = ?',[req.body.idMed],
             (error, resultado, fields) => {
                 conn.release();  
                 if(error){return res.json({ error: 'erro sql'})} 
