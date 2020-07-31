@@ -4,6 +4,9 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const uploadImage = require('../../middleware/imgPrest');
 const multer = require('multer');
+const cloudinary = require('cloudinary').v2;
+const sharp = require('sharp');
+const filterImg = require('../../middleware/sharp');
 
 /*                                                    ENVIAR EMAIL                                                               */
 let transporter = nodemailer.createTransport({
@@ -17,6 +20,11 @@ let transporter = nodemailer.createTransport({
 });
 /*                                                    ---------------                                                              */
 
+cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_NAME ,
+    api_key: process.env.CLOUDINARY_KEY ,
+    api_secret: process.env.CLOUDINARY_SECRET
+});
 
 /*                                                       GERAR CODIGO                                                                  */
 function getRandomInt() { return Math.floor(Math.random() * (999999 - 100000)) + 100000; }
@@ -35,7 +43,7 @@ exports.BuscaPrest2 = (req, res, next) => {
             const response = {
                 Prestadores: results.map(prest => {
                     return{
-                        fotoPrest: process.env.URL_HOST + prest.LogoPrest,
+                        fotoPrest: prest.LogoPrest,
                         NomeFantsPrest: prest.NomeFantsPrest,
                         PetShopPrest: prest.PetShopPrest,
                         ClinicaPrest: prest.ClinicaPrest,
@@ -224,24 +232,37 @@ exports.CadCincoPrest = (req, res, next) => {
             if(err.message == 'File too large'){
                 err.message = 'Arquivo maior que 5MB'
             }
-            console.log("erro multer");
             return res.json({err:'error multer', message: err.message})
         
         } else if (err) {
-            console.log("error ao enviar imagem");
-            console.log(err);
             return res.json({err: err, message:'error ao enviar imagem'})
         } else if (req.fileFiltImgResp === 'fail'){
-            console.log("entrou no fail");
             //resp += ' '+ req.fileFiltImgResp
             return res.json({ message: req.respError, msg:'error up img' })
         } else if(req.fileFiltImgResp === 'ok') {
-            console.log("entrou no ok");
-            console.log(req.file.path)
-            req.imagem = req.file.path
-            funcSql()
-            //return res.json({ message: 'salvoou' , msg: req.file.path })
+            filterImg.compressImage(req.file).then(newPath => {  
+                   
+                cloudinary.uploader.upload(newPath, function(err, result){
+
+                    if(err){ return res.json({ error: err, message:'falha ao enviar imagem'}) }
+            
+                    if(result){
+                        console.log(result.secure_url);
+                        //return res.status(200).send({ resp: result, message: 'upload concluido'})
+                        req.imagem = result.secure_url
+                        funcSql() 
+                    }
+                })
+            }).catch(err => {
+                return res.json({ err: err, message:'error server resize' })
+            });
         }
+
+            // console.log(req.file.path)
+            // req.imagem = req.file.path
+            // funcSql()
+            //return res.json({ message: 'salvoou' , msg: req.file.path })
+        
     })
 
     function funcSql(){
@@ -362,7 +383,7 @@ exports.CadSetePrest = (req,res,next) => {
         conn.query('select * from funcionario where EmailFunc = ? or CpfFunc = ?', [req.body.EmailFunc,req.body.CpfFunc],
         (error, result, field)=> {
             conn.release();
-            if(error){return res.json({ error:error})}
+            if(error){return res.json({ error:'error sql'})}
             if(result.length >= 1){
                 if(result[0].EmailFunc == req.body.EmailFunc){
                     return res.json({ message: "Ja existe Email"})
@@ -372,24 +393,24 @@ exports.CadSetePrest = (req,res,next) => {
                 }         
             }
 
-//             mysql.getConnection((error, conn) => {
-//                 conn.query('select * from responsavel where CpfResp = ? and CelResp= ?', [req.body.CpfFunc,req.body.CelFunc],
-//                 (error, result, field)=> {
-//                     conn.release();
-//                     if(error){return res.json({ error:error})}
-//                     if(result.length >= 1){
-//                         if(result[0].CpfFunc == req.body.CpfFunc){
-//                             return res.json({ message: "Ja existe CPF"})
-//                         }      
-//                         if(result[0].CelResp == req.body.CelResp){
-//                             return res.json({ message: "Ja existe Numero"})
-//                         }     
-//                     }
+            mysql.getConnection((error, conn) => {
+                conn.query('select * from responsavel where CpfResp = ? and CelResp= ?', [req.body.CpfFunc,req.body.CelFunc],
+                (error, result, field)=> {
+                    conn.release();
+                    if(error){return res.json({ error:'error sql'})}
+                    if(result.length >= 1){
+                        if(result[0].CpfFunc == req.body.CpfFunc){
+                            return res.json({ message: "Ja existe CPF"})
+                        }      
+                        if(result[0].CelResp == req.body.CelResp){
+                            return res.json({ message: "Ja existe Numero"})
+                        }     
+                    }
 
                     mysql.getConnection((error, conn) => {
                         conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp)values(?,?,?,?)',[req.prestadores.id,req.body.NomeFunc,req.body.CpfFunc,req.body.CelFunc],
                         (error, resulta, field)=> { conn.release();
-                            if(error){return res.json({ error: error})} 
+                            if(error){return res.json({ error: 'error sql'})} 
 
                             var ids = resulta.insertId;  
 
@@ -397,7 +418,7 @@ exports.CadSetePrest = (req,res,next) => {
                                 conn.query('update prestadores set IdResp=? where EmailPrest= ?', [ids,req.prestadores.EmailPrest],
                                 (error, results, field)=> {
                                     conn.release(); 
-                                    if(error){return res.json({ error:error})}   
+                                    if(error){return res.json({ error:'error sql'})}   
                                 
                                     if(req.body.SegundInicio == ''){req.body.SegundInicio = null;}
                                     if(req.body.SegundFinal == ''){req.body.SegundFinal = null;}
@@ -418,7 +439,7 @@ exports.CadSetePrest = (req,res,next) => {
                                         conn.query('insert into horarioFunc (SegundInicio, SegundFinal, TercaInicio, TercaFinal, QuartInicio, QuartFinal, QuintInicio, QuintFinal, SextInicio, SextFinal, SabInicio, SabFinal, DomingInicio, DomingFinal) values (?,?,?,?,?,?,?,?,?,?,?,?,?,?)', [req.body.SegundInicio, req.body.SegundFinal, req.body.TercaInicio, req.body.TercaFinal, req.body.QuartInicio,req.body.QuartFinal, req.body.QuintInicio, req.body.QuintFinal, req.body.SextInicio, req.body.SextFinal, req.body.SabInicio, req.body.SabFinal, req.body.DomingInicio, req.body.DomingFinal],
                                         (error, resultHorario, field)=> {
                                             conn.release();
-                                            if(error){return res.json({ error:error})}      
+                                            if(error){return res.json({ error:'error sql'})}      
 
                                             let idHorarios = resultHorario.insertId; 
                                                 if(req.body.CRMVFunc != "" && req.body.CRMVFunc != null && req.body.CRMVFunc != undefined)
@@ -427,7 +448,7 @@ exports.CadSetePrest = (req,res,next) => {
                                                         conn.query('select * from funcionario where CRMVFunc= ?', [req.body.CRMVFunc],
                                                         (error, result, field)=> {
                                                             conn.release();
-                                                            if(error){return res.json({ error:error})}  
+                                                            if(error){return res.json({ error:'error sql'})}  
                                                             if(result.length >= 1){
                                                                 if(result[0].CRMVFunc == req.body.CRMVFunc){
                                                                     return res.json({ message: "Ja existe CRMV"})
@@ -451,13 +472,13 @@ exports.CadSetePrest = (req,res,next) => {
                                                                             [req.prestadores.id,idHorarios,req.body.CelFunc,req.body.NomeFunc,req.body.EmailFunc,req.body.CpfFunc,req.body.RecepFunc,req.body.VetFunc,req.body.AdminFunc,req.body.FinanFunc,"1111","Confirmado",hash,timeCodFunc,passRandom,req.body.CRMVFunc, req.body.DateEmiFunc,"Responsável"],
                                                                             (error, resultado, field)=> { 
                                                                                 conn.release();
-                                                                                if(error){return res.json({ error:error})}  
+                                                                                if(error){return res.json({ error:'error sql'})}  
 
                                                                                 mysql.getConnection((error, conn) => {
                                                                                     conn.query('update prestadores set StatusPrest=? where EmailPrest= ?', ["Completo",req.prestadores.EmailPrest],
                                                                                     (error, results, field)=> {
                                                                                         conn.release(); 
-                                                                                        if(error){return res.json({ error:error})}             
+                                                                                        if(error){return res.json({ error:'error sql'})}             
                                                                                         return res.json({ message: 'Cadastrado'})
                                                                                     })   
                                                                                 }) 
@@ -509,8 +530,8 @@ exports.CadSetePrest = (req,res,next) => {
                                     })
     
                                 })
-//                             }) 
-//                         })
+                            }) 
+                        })
                     })       
                 })
             })     
