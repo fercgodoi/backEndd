@@ -224,14 +224,18 @@ exports.CadCincoPrest = (req, res, next) => {
             if(err.message == 'File too large'){
                 err.message = 'Arquivo maior que 5MB'
             }
+            console.log("erro multer");
             return res.json({err:'error multer', message: err.message})
         
         } else if (err) {
+            console.log("error ao enviar imagem");
             return res.json({err: err, message:'error ao enviar imagem'})
         } else if (req.fileFiltImgResp === 'fail'){
+            console.log("entrou no fail");
             //resp += ' '+ req.fileFiltImgResp
             return res.json({ message: req.respError, msg:'error up img' })
         } else if(req.fileFiltImgResp === 'ok') {
+            console.log("entrou no ok");
             console.log(req.file.path)
             req.imagem = req.file.path
             funcSql()
