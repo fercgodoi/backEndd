@@ -229,6 +229,7 @@ exports.CadCincoPrest = (req, res, next) => {
         
         } else if (err) {
             console.log("error ao enviar imagem");
+            console.log(err);
             return res.json({err: err, message:'error ao enviar imagem'})
         } else if (req.fileFiltImgResp === 'fail'){
             console.log("entrou no fail");
