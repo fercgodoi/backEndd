@@ -5,7 +5,8 @@ const storage = multer.diskStorage({
             cb(null, './uploads/imgPrest');
     },
     filename: function(req, file, cb){
-        cb(null,`idPrest${req.prestadores.id}--`+ new Date().toISOString().replace(/:/g, '-').substr(0,19)+ '-' + file.originalname);  
+        cb(null,`idPrest${req.prestadores.id}--`+ new Date().toISOString().replace(/:/g, '-').substr(0,19)+ '-' + file.originalname);
+        // cb(null,`idPrest--teste--`+ new Date().toISOString().replace(/:/g, '-').substr(0,19)+ '-' + file.originalname);    
          //Nomeando a imagem com a data e o nome original da imagem//
          //`idCli${req.cliente.idCliente}--`+
     }
@@ -25,7 +26,7 @@ const fileFitro = (req, file, cb, ) => {                                        
 exports.upload = multer({
     storage: storage,
     limits:{
-        fileSize: 1024 * 1024 * 5                   //limitando o tamanho da imagem p 3mb
+        fileSize: 1024 * 1024 * 5                   //limitando o tamanho da imagem p 5mb
     },
     fileFilter: fileFitro,
 }
