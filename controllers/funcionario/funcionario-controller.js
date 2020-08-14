@@ -651,3 +651,22 @@ exports.BuscarFuncPrest = (req, res, next) => {
     })
 }
 /*                                                    ---------------                                                              */
+
+
+/*                                                    TROCA SENHA FUNCIONARIO                                                               */
+exports.FuncClinica = (req, res, next) => {       
+    mysql.getConnection((error, conn) =>{
+        if(error){ return res.json({ message: "error sql"}) } 
+
+        conn.query('select * from funcionario where funcionario.idPrest=? and CRMVFunc is not null and DateEmiFunc is not null ', [req.funcionario.idPrest],
+            (error, result, field)=> {
+                conn.release();
+                if(error){ return res.json({ message: "error sql"}) }                
+                if(result.length === 0 || result.length === []){
+                    return res.json({ message: "Usuario inexistente"})
+                }
+                return res.json({ message: "Usuario existente"})                
+            })
+    }) 
+}
+/*                                                    ---------------                                                              */

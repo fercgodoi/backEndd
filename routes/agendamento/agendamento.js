@@ -15,5 +15,6 @@ router.post('/BuscarPendente', login.obrigatorio,AgendamentoController.BuscarPen
 router.post('/BuscarAprovados', login.obrigatorio,AgendamentoController.BuscarAprovados);
 router.post('/BuscarNegado', login.obrigatorio,AgendamentoController.BuscarNegado);
 router.post('/ContAgendamentoDia',login.obrigatorio, AgendamentoController.ContAgendamentoDia);
+router.post('/BuscarAprovadosDia',login.obrigatorio, AgendamentoController.BuscarAprovadosDia);
 
 module.exports = router;

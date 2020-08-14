@@ -394,12 +394,12 @@ exports.CadSetePrest = (req,res,next) => {
             }
 
             mysql.getConnection((error, conn) => {
-                conn.query('select * from responsavel where CpfResp = ? and CelResp= ?', [req.body.CpfFunc,req.body.CelFunc],
+                conn.query('select * from responsavel where CpfResp = ? or CelResp= ?', [req.body.CpfFunc,req.body.CelFunc],
                 (error, result, field)=> {
                     conn.release();
                     if(error){return res.json({ error:'error sql'})}
                     if(result.length >= 1){
-                        if(result[0].CpfFunc == req.body.CpfFunc){
+                        if(result[0].CpfResp == req.body.CpfFunc){
                             return res.json({ message: "Ja existe CPF"})
                         }      
                         if(result[0].CelResp == req.body.CelResp){
@@ -409,7 +409,8 @@ exports.CadSetePrest = (req,res,next) => {
 
                     mysql.getConnection((error, conn) => {
                         conn.query('insert into responsavel(idPrest,NomeResp,CpfResp,CelResp)values(?,?,?,?)',[req.prestadores.id,req.body.NomeFunc,req.body.CpfFunc,req.body.CelFunc],
-                        (error, resulta, field)=> { conn.release();
+                        (error, resulta, field)=> { 
+                            conn.release();
                             if(error){return res.json({ error: 'error sql'})} 
 
                             var ids = resulta.insertId;  

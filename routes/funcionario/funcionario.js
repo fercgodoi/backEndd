@@ -16,4 +16,6 @@ router.post('/FiltroFunc',login.obrigatorio,FuncionarioController.FiltroFunc);
 router.post('/LoginFunc',FuncionarioController.LoginFunc);
 router.post('/EsqueciSenhaFunc',FuncionarioController.EsqueciSenhaFunc);
 
+router.post('/FuncClinica', login.obrigatorio,FuncionarioController.FuncClinica);
+
 module.exports = router;

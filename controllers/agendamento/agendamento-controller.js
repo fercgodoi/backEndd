@@ -193,7 +193,7 @@ exports.BuscarPendente = (req, res, next) => {
         var dataCorreta = ano + "-" + mes + "-" + dia;
 
         // and agendamento.HoraAgen >= ?
-        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Pendente" and agendamento.DataAgen >= ?  order by agendamento.DataAgen limit 5 ', [req.funcionario.idPrest, dataCorreta],
+        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Pendente" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
             (error, resultado, field)=> {
                 conn.release();
                 if(error){return res.json({ error: 'erro sql'})}             
@@ -238,7 +238,7 @@ exports.BuscarAprovados = (req, res, next) => {       //rota passando parametro
         var dataCorreta = ano + "-" + mes + "-" + dia;
 
         // and agendamento.HoraAgen >= ?
-        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Confirmado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen limit 5 ', [req.funcionario.idPrest, dataCorreta],
+        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Confirmado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
             (error, resultado, field)=> {
                 conn.release(); 
                 if(error){return res.json({ error: 'erro sql'})}          
@@ -284,10 +284,45 @@ exports.BuscarNegado = (req, res, next) => {
         var dataCorreta = ano + "-" + mes + "-" + dia;
 
         // and agendamento.HoraAgen >= ?
-        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Negado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen limit 5 ', [req.funcionario.idPrest, dataCorreta],
+        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Negado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
             (error, resultado, field)=> {
                 conn.release();
                 if(error){return res.json({ error: 'erro sql'})}            
+
+                const response = { 
+                    Agendamento: resultado.map(agend => {
+                        return  {
+                            nomeCli: agend.nomeCli,
+                            racaPet: agend.racaPet,
+                            nomePet: agend.nomePet,
+                            fotoPet: agend.fotoPet,
+                            tipoServicoAgen: agend.tipoServicoAgen,
+                            formaPagtAgen: agend.formaPagtAgen,
+                            DataAgen: agend.DataAgen,
+                            HoraAgen: agend.HoraAgen,
+                            idAgend: agend.idAgend
+                        };
+                    })
+                };
+                return res.json({ response });
+            })                     
+    })
+}
+/*                                                    ---------------                                                              */
+
+
+
+
+/*                                                    BUSCAR AGENDAMENTO APROVADOS                                                                */
+exports.BuscarAprovadosDia = (req, res, next) => {       //rota passando parametro
+    mysql.getConnection((error, conn) => {
+        if(error){return res.json({ error: 'erro sql'})} 
+
+        // and agendamento.HoraAgen >= ?
+        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Confirmado" and agendamento.DataAgen = ?  order by agendamento.HoraAgen ', [req.funcionario.idPrest, req.body.dataCorreta],
+            (error, resultado, field)=> {
+                conn.release(); 
+                if(error){return res.json({ error: 'erro sql'})}          
 
                 const response = { 
                     Agendamento: resultado.map(agend => {
