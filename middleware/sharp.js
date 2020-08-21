@@ -6,7 +6,7 @@ exports.compressImage = (file) => {
 
     return sharp(file.path)
         .resize(531, 479)
-        .toFormat('webp')
+        .toFormat('jpg')
         .webp({
             quality: 80
         })
