@@ -3,6 +3,7 @@ const router = express.Router();
 const login = require('../../middleware/login');
 
 const PrestadorController = require('../../controllers/prestador/prestador-controller');
+const CadastroPrimeiroController = require('../../controllers/prestador/CadastroPrimeiro');
 
 router.post('/CadPriPrest',PrestadorController.CadPriPrest);
 router.post('/CadSegPrest',login.inicio,PrestadorController.CadSegPrest);

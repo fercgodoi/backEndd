@@ -39,7 +39,8 @@ exports.buscarAgend = (req, res, next) => {
     mysql.getConnection((error, conn) => {
         if(error){return res.json({ error: 'erro sql'})} 
 
-        conn.query('select cliente.nomeCli,pet.especiePet, pet.nomePet, agendamento.idPet, pet.dataCastPet,pet.sexoPet, pet.aniverPet,pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idAgen = ? and agendamento.StatusAgen="Pendente"', [req.body.idAgend],
+        conn.query('select cliente.nomeCli,pet.especiePet,agendamento.statusAgen, pet.nomePet, agendamento.idPet, pet.dataCastPet,pet.sexoPet, pet.aniverPet,pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idAgen = ? and agendamento.idPrest = ?', [req.body.idAgend,req.funcionario.idPrest],
+        // tdNomePet.onclick = function() { Detalhes(produto[i].idAgend) };
             (error, resultado, field)=> {
                 conn.release();
                 if(error){return res.json({ error: 'erro sql'})}          
@@ -61,7 +62,8 @@ exports.buscarAgend = (req, res, next) => {
                             dataPet: agend.aniverPet,
                             castPet: agend.castPet,
                             especiePet: agend.especiePet,
-                            idPet: agend.idPet
+                            idPet: agend.idPet,
+                            statusAgen: agend.statusAgen
                         };
                     })
                 };
@@ -209,7 +211,7 @@ exports.BuscarPendente = (req, res, next) => {
                             formaPagtAgen: agend.formaPagtAgen,
                             DataAgen: agend.DataAgen,
                             HoraAgen: agend.HoraAgen,
-                            idAgend: agend.idAgend
+                            idAgend: agend.idAgen
                         };
                     })
                 };
@@ -238,7 +240,7 @@ exports.BuscarAprovados = (req, res, next) => {       //rota passando parametro
         var dataCorreta = ano + "-" + mes + "-" + dia;
 
         // and agendamento.HoraAgen >= ?
-        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Confirmado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
+        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.statusAgen="Confirmado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
             (error, resultado, field)=> {
                 conn.release(); 
                 if(error){return res.json({ error: 'erro sql'})}          
@@ -254,7 +256,7 @@ exports.BuscarAprovados = (req, res, next) => {       //rota passando parametro
                             formaPagtAgen: agend.formaPagtAgen,
                             DataAgen: agend.DataAgen,
                             HoraAgen: agend.HoraAgen,
-                            idAgend: agend.idAgend
+                            idAgend: agend.idAgen
                         };
                     })
                 };
@@ -284,7 +286,7 @@ exports.BuscarNegado = (req, res, next) => {
         var dataCorreta = ano + "-" + mes + "-" + dia;
 
         // and agendamento.HoraAgen >= ?
-        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.StatusAgen="Negado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
+        conn.query('select cliente.nomeCli, pet.nomePet, pet.racaPet, pet.fotoPet, agendamento.idAgen, agendamento.tipoServicoAgen,  agendamento.formaPagtAgen,  agendamento.DataAgen,  agendamento.HoraAgen from agendamento  inner join pet on pet.idPet = agendamento.idPet inner join cliente on pet.idCli = cliente.idCli  where agendamento.idPrest = ? and agendamento.statusAgen="Negado" and agendamento.DataAgen >= ?  order by agendamento.DataAgen desc limit 5 ', [req.funcionario.idPrest, dataCorreta],
             (error, resultado, field)=> {
                 conn.release();
                 if(error){return res.json({ error: 'erro sql'})}            
@@ -300,7 +302,7 @@ exports.BuscarNegado = (req, res, next) => {
                             formaPagtAgen: agend.formaPagtAgen,
                             DataAgen: agend.DataAgen,
                             HoraAgen: agend.HoraAgen,
-                            idAgend: agend.idAgend
+                            idAgend: agend.idAgen
                         };
                     })
                 };
@@ -335,7 +337,7 @@ exports.BuscarAprovadosDia = (req, res, next) => {       //rota passando paramet
                             formaPagtAgen: agend.formaPagtAgen,
                             DataAgen: agend.DataAgen,
                             HoraAgen: agend.HoraAgen,
-                            idAgend: agend.idAgend
+                            idAgend: agend.idAgen
                         };
                     })
                 };
