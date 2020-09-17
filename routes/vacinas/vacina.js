@@ -14,5 +14,9 @@ router.post('/buscarVacinasSolicitadas', login.obrigatorio,vacinaController.busc
 router.post('/AprovarVacinasSolicitadas', login.obrigatorio,vacinaController.AprovarVacinasSolicitadas); 
 router.post('/NegarVacinasSolicitadas', login.obrigatorio,vacinaController.NegarVacinasSolicitadas); 
 
+<<<<<<< HEAD
 router.post('/inserirVacinaCad', login.obrigatorio,vacinaController.inserirVacinaCad);
+=======
+
+>>>>>>> b9f2d5467d2384cbfec1b650d6859601141eebad
 module.exports = router; 

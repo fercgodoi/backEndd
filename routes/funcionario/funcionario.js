@@ -18,7 +18,10 @@ router.post('/EsqueciSenhaFunc',FuncionarioController.EsqueciSenhaFunc);
 
 router.post('/FuncClinica', login.obrigatorio,FuncionarioController.FuncClinica);
 
+<<<<<<< HEAD
 router.post('/VetouNao', login.obrigatorio,FuncionarioController.VetouNao);
 
 
+=======
+>>>>>>> b9f2d5467d2384cbfec1b650d6859601141eebad
 module.exports = router;

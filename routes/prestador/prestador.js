@@ -18,6 +18,9 @@ router.post('/EditarServicosPrest',login.obrigatorio,PrestadorController.EditarS
 router.post('/ExcluirServicosPrest',login.obrigatorio,PrestadorController.ExcluirServicosPrest);
 router.post('/EditarPrest',login.obrigatorio,PrestadorController.EditarPrest);
 router.post('/BuscarPrest2',login.obrigatorio,PrestadorController.BuscaPrest2);
+<<<<<<< HEAD
 router.post('/BuscaServicosPresQuatro',login.inicio,PrestadorController.BuscaServicosPresQuatro);
+=======
+>>>>>>> b9f2d5467d2384cbfec1b650d6859601141eebad
 
 module.exports = router;

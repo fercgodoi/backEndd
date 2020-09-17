@@ -1,0 +1,323 @@
+
+-----------------GERAL------------
+//definir var de ambiente do acesso ao banco// ✔
+-install dotenv para poder enxergar as var de ambiente ✔
+
+//melhorar o retorno de erro// ✔
+
+//implementar retorno de erro caso o servidor nao conctar// ✔
+
+----------------CLIENTE----------
+//implementar recebimento a foto em routes/clientes.js //
+
+//alterar update do cliente// ✔
+
+//fazer a sugunda tela de cadastro receber o id do cadastro da tela 1// ✔
+-pegar o id do item retornado
+
+//tratar erro de caso o usuario nao digitar nada na requisicao// ✔
+
+-----------------PET-------------------
+
+//apagar o idPet de cliente e adicionar idCli em pet// ✔           
+
+
+---------------VACINA------------------
+
+//apagar idVacina de pet e adicionar idPet em vacina// ✔
+
+//fazer teste na api vacina// ✔  
+
+//add foreing key idPrestador e idFunc a tabela vacina// ✔
+
+//deixar api pronta para receber as chaves estrangeiras // ✔  
+
+//vincular as chaves ao com as tabela funcionario e prestador// ✔  
+
+
+------------PRESTADOR----------------------
+
+//crud prestadores// ✔                                                                     
+
+
+-----------FUNCIONARIO----------------------
+
+//crud funcionario// ✔                                                                        <======================================= 
+
+//vincular tabela de funcionario ao prestador// ✔
+
+//criar coluna bairro no cadastro do funcionario// ✔
+
+//tipodeprofissao necessita de insert em duas tabelas// ✔  
+
+--------ESTRUTURA---------------------
+
+//criar tabela tipoProfissao com colunas de cada profissao e coluna de escolha e o idDoFunc // ✔
+
+//tipoProfissao => funcionario => prestadores // ✔
+
+//criar prestadores dpois criar funcionario e dpois vincular a vacina// ✔  
+
+
+//------------------------------------------------------//
+
+--arrumar tabelas prestador, funcionario, vacina, pet -- ✔
+
+--inserir dados na tabela prestador-- ✔
+
+--add bairro,recepcionista,veterinario,Administrador,financeiro,idPrest na tabela funcionario-- ✔
+
+--add caluna status na tabela cliente, status= 'Pendente', 'Ok', 'RecSenha'-- ✔
+
+--alterar retorno da autenticação para verificar o status e ver se o cliente fez os dois passos do cadastro-- ✔
+
+//--------------------------------------------------------------//
+
+--estudar sequelise e verificar se vale a pena implementar--
+
+--implementar esqueci minha senha com o armazenamento do nova senha randomica e enviar ao email do usuario para que ele logue por ela-- ✔
+//pesquisar se o usuario é existente e dpois na api fazer a senha random e alterar a senha e envia la para o email do usuario//------ ✔
+
+--implementar melhorias com tokens nos login--
+//implementar JWT tokens na autenticação
+
+--verificar se ja tem o email cadastrado no banco de dados para poder prosseguir com o cadastro-- ✔
+
+--pesquisar como mandar email no front end angular (nodemail)-- ✔
+//tem que alterar a senha e dpois enviar o email, nessa ordem//--- ✔
+//fazer ele verificar se o email e a senha estao certo e com isso enviar o email para o usuario//         <====================
+
+--na hora do cadastro se o usuario ja estiver cadastrado e o status dele estiver pendente entao redirecionar para cadastro passo2--  //DESCONTINUADO//
+
+--na hora do login se o usuario ja estiver cadastrado e o status dele estiver pendente entao redirecionar para cadastro passo2--    //DESCONTINUADO//
+
+--olhar o video passo8 do curso onde passar duas querys em uma mesma rota-- ✔
+
+--fazer os dados do cadastro passo 2 ser inserido no id correto, creio que precise do jwt--                 //DESCONTINUADO//
+//no front apos fazer o passo 1 ,salvamos em uma var o id do usuario e fazemos um update nesse id no passo2//   //DESCONTINUADO//
+
+--implementar upload de imagem-- ✔
+
+--organizar o cadastro pois agora nao sera necessario o passo2, apenas o passo1-- ✔
+//verifica se o email é existente, pq se for ira emitir uma msg de 'erro email ja cadastrado'// ✔
+//verificar se nao estiver cadastrado, ai salvamos o email e a senha e deixamos o status pendente e enviamos um codigo ao email do usuario, e redirecionamos ao login// ✔
+//apos ele fazer o login se o status estiver access ele pode entrar no app, se nao ele tera que colocar o codigo que foi enviado ao email dele// ✔
+//Status: first, access, full//
+//criar coluna codigoCli para verificação de email// ✔
+//criar coluna timeCodCli para armazenar o horario que o usuario enviou o codigo, que tem validade de 1 dia// ✔
+
+--falta colocar o envio de email-- ✔
+
+--passar o id do cliente por um tokken no verificar codigo-- ✔
+
+--autenticação de dois fatores-- +-
+
+--criptografia dos dados no banco-- ✔
+
+--Um dia corresponde a 86.400,000 milisegundos-- ✔
+
+--passar a senha do email como um var de ambiente--
+
+--encripta o token--
+
+--TERMINAR PELO AMOR DE DEUS A PARTE DO ESQUEÇI A SENHA ONDE ELE ENVIARA PARA O EMAIL A NOVA SENHA E ATUALIZARA O STATUS, E ASSIM QUE FIZER O CADASTRO NOVAMENTE SERA REDIRECIONADO PARA RENOVAR A SENHA--
+
+--esconder as rotas de api--
+
+--deixar tudo assincrono--
+
+--bcript so aceita formato string--
+
+--da reload na pagina do inicioPet apos cadastrar ou alterar dados do pet--
+
+--pegar img dos icones do tab para assim que clicado ele fique azul--
+
+--alterar os campos de datas do banco para varchar de 20--
+
+--implementar tela de carregamento nas paginas--
+
+--IMPLEMENTAR SEQUELIZE--
+
+--organizar o envio de email em um so arquivo--
+
+---------------------------PART INICIAL(LOGIN)---------------------------------------
+
+*************TELAS************
+
+-inicio
+//inicio antigo
+
+-inicio2
+//email OK
+
+-login
+//-sub tela de confirmação de codigo caso precise
+
+-esqueceu-senha
+
+-cadastro-inicio
+//cadastro inicial do cliente
+
+-termo
+
+**************ANOTS**************
+
+--fazer tela de colocar a nova senha-- ✔
+
+
+-----------------------TELA HOME (TAB 1)--------------------------------------------
+
+*************TELAS************
+
+--home
+
+
+
+-----------------------PERFIL DO PET (TAB 2)--------------------------------------------
+
+*************TELAS************
+
+--inicio-pet
+
+-cadastro-pet
+
+- info-pet
+//informaçoes fisicas gerais do pet, editar perfil do pet
+
+-menu-pet
+//pagina com os topicos sobre o pet(agendamentos, vacinas, Infomaçoes)
+
+-vacina
+//pagina bem simples, passiva de melhorias 
+
+-peso
+//pagina bem simples, exibindo apenas o peso 
+
+
+**************ANOTS**************
+
+-colocar as paginas filhas do menu-pet nas rotas no tab 2-- ✔
+
+-terminar pagina menu-pet-- 
+
+-tabela historico no banco onde salvara todas as alteraçoes que o usuario fizer, peso, vacinas..-
+
+-colocar nas telas rotas para sempre que for alterar algo, salvar os dados antigo no banco historicoPet-
+
+-arrumar para exibir apenas as raças referentes a especie- 
+
+-exibir as imagens dos pets cadastrado referente ao cliente logado- ✔
+
+-Estudar como passar o id do animal pelas rotas- ✔
+//resposta esta no video de angular nº 44//
+
+-buscar pet especifico do tutor e buscar pet individual- ✔
+
+-subir imagem -
+
+-arrumar filtração das datas- ✔
+
+-arrumar pagina de vacina- 
+
+-organizar pagina de cadastro do Cliente- 
+
+- na tela de cadastrar caso na aba de especie for escolhido Outros, apresentar mais dois campos abaixo para a pessoa digitar a especie ea raca--
+
+- deixar raca aparecendo na hora q inicar a pagina - 
+
+-IMPLEMENTAR A VOLTA A PAGINA ANTERIOR-- ✔
+
+--colocar termos de uso nas tela de login--
+
+--alterar na api, na hora que for buscar as vacinas ja verificar se a data da proxima aplicação é menor que a data atual do sistema e assim fazer alteraçoes-- ✔
+
+--fazer com que ao preencher nova vacina, seja enviado um email ao veterinario, onde ele confirma ou nao a vacina--
+
+--buscar conteudo da tabela de vacinas que ficou no pc antigo para dar continuidade--✔
+
+--gerar token com as informaçoes da vacina para ao enviar o email ao vaterinario ele poder confirmar-- ? ✔
+
+--saber quais campos realmente precisa conter na tela de add vacina-- 
+
+--alterar o status das vacinas nao confirmadas para -1 -- ? ✔
+
+--colunas statusVacina e confirmaVacina passivel passivel de uma delas ficarem obsoletas-- 
+
+--alterar na api de buscar vacinas para ja atualizar, ou criar uma nova api que faça essa funcionalidade--
+
+--Criar campo lote da vacina no banco de dados e conectar a tudo------------            <================
+
+--buscar todos os dados(nomeVeterinario, email veterinario, crmv ) na requisição feita ao pegar as vacinas--
+
+--provalvel de salvar nomePet no localStorage-- ✔
+
+--pegar o nome do pet pela tela prontuario e guarda no localStorage-- ✔
+
+--corrigir datas CORRIGIR LOGOOO, VAI DA MUITO TRABALHO-- ✔
+
+--pequisar como cancelar token--
+
+--pesquisar como passar parametro ao abrir html no nodejs--
+
+--fazer a conexao da api com a na tela edit-vacina-- ✔
+
+--MUITOS ERROS ATRELADOS A PAGINA QUE ENVIA OS DADOS AO VETERINARIO, POSSIVEL COLOcAR NO MSM SERVE DO B2B--
+--REVER ESSE ERROS DPOIS--
+--TRABALHAR A DATA PARA DEIXAR NO FORMATO NORMAL DD/MM/YYYY
+
+--comecar a vincular todas as novas telas e gerar o apk, teste no pc primeiro--
+
+--deixar a tela do veterinario aceitar a vacina para ele apenas aceitar ou nao, e apenas colocar uma observação--
+
+--Provavel de remover o service do menu-pet--
+
+----------------------AGENDAMENTOS CALENDARIO (TAB 3)-----------------------------------
+-agendamento
+//do pet no prestador
+
+-conf-agendamento
+//recibo do pagamento contento hora, valor qr code
+/passivel de ser apagado
+
+- adicionar-cartao
+
+-meios-pagamentos
+//uma pagina contendo a descrição do prestador com os meios de pagamentos
+//incompleto
+
+-recibo
+//mesma coisa de conf de agendamento, ou seja apagar conf de agendamento
+//recibo do pagamento contento hora, valor qr code
+
+
+
+------------------------TAB 5--------------------------------------------------
+
+-cadastro-cliente
+//cadastro dos dados do cliente
+
+-cadastro-denuncio
+//denuncios de maus tratos
+
+- edit-perfil-cliente
+//passivel de ajustes
+
+-troca-senha
+//apos esta logado se o cliente desejar trocar senha
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Criação da tela de vacinas, criar estrutura html com o design css, codificar a pagina com todas as funcionalidades, fazer conexao do front com o beck atraves da api para consumir os dados

@@ -2,15 +2,23 @@ const fs = require('fs');
 sharp = require('sharp');
 
 exports.compressImage = (file) => {
+<<<<<<< HEAD
 
     const newPath = file.path.split('.')[0] + '.jpg';
 
+=======
+    const newPath = file.path.split('.')[0] + '.webp';
+>>>>>>> b9f2d5467d2384cbfec1b650d6859601141eebad
 
     return sharp(file.path)
         .resize(531, 479)
         .toFormat('jpg')
+<<<<<<< HEAD
 
         .jpeg({
+=======
+        .webp({
+>>>>>>> b9f2d5467d2384cbfec1b650d6859601141eebad
             quality: 80
         })
         .toBuffer()

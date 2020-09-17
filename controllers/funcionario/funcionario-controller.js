@@ -1674,6 +1674,7 @@ exports.FuncClinica = (req, res, next) => {
     }) 
 }
 /*                                                    ---------------                                                              */
+<<<<<<< HEAD
 
 
 /*                                                    BUSCAR FUNCIONARIO                                                                 */
@@ -1697,3 +1698,5 @@ exports.VetouNao = (req, res, next) => {       //rota passando parametro
     })
 }
 /*                                                    ---------------                                                              */
+=======
+>>>>>>> b9f2d5467d2384cbfec1b650d6859601141eebad
